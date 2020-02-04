@@ -3,25 +3,17 @@ import numpy as np
 import intervals as iv
 
 from fuzzy_fuss.fuzz import Fuzz, FuzzDict
+from fuzzy_fuss.func import Trapezoid
 
 
 class FuzzySetTuple(Fuzz, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])):
     def __init__(self, *args, **kwargs):
         super(FuzzySetTuple, self).__init__()
 
-        bounds = (self.a - self.alpha,
-                  self.a,
-                  self.b,
-                  self.b + self.beta)
-
-        self._intervals = iv.IntervalDict()
-        self._intervals[iv.open(-iv.inf, bounds[0])] = lambda x: 0.
-        self._intervals[iv.closedopen(bounds[0], bounds[1])] = lambda x: (x - self.a + self.alpha)/self.alpha
-        self._intervals[iv.closed(bounds[1], bounds[2])] = lambda x: 1.
-        self._intervals[iv.openclosed(bounds[2], bounds[3])] = lambda x: (self.b + self.beta - x)/self.beta
-        self._intervals[iv.open(bounds[3], iv.inf)] = lambda x: 0.
-
-        self._func = lambda x: self._intervals[x](x)
+        self._func = Trapezoid(self.a - self.alpha,
+                               self.a,
+                               self.b,
+                               self.b + self.beta)
 
     @staticmethod
     def from_points(v1, v2, v3, v4):
@@ -29,16 +21,6 @@ class FuzzySetTuple(Fuzz, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])
             raise ValueError("Values are not in order")
 
         return FuzzySetTuple(v2, v3, v2-v1, v4-v3)
-
-    @property
-    def intervals(self):
-        return self._intervals
-
-    def get_value(self, x):
-        return self.func(x)
-
-    def get_values(self, data, **kwargs):
-        return np.array(tuple(map(lambda x: self.get_value(x), data)))
 
 
 if __name__ == '__main__':

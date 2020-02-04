@@ -4,26 +4,21 @@ import numpy as np
 class Func(object):
     DEFAULT_NAME = ''
 
-    def __init__(self, *args, name=None, **kwargs):
+    def __init__(self, *args, formula=None, name=None, **kwargs):
         self.name = name or self.DEFAULT_NAME
-
-    def __call__(self, *args):
-        raise NotImplementedError("Function not implemented")
-
-    def inversion(self):
-        return self.__class__.__new__(lambda *args: 1 - self(*args))
-
-    def __neg__(self):
-        return self.inversion()
-
-
-class AnyFunc(Func):
-    def __init__(self, formula, **kwargs):
-        super(AnyFunc, self).__init__(**kwargs)
         self._func = formula
 
     def __call__(self, *args):
+        if self._func is None:
+            raise NotImplementedError("Function not implemented")
+
         return self._func(*args)
+
+    def inversion(self):
+        return Func(formula=(lambda *args: 1 - self(*args)), name=f"{self.name} (inversion)")
+
+    def __neg__(self):
+        return self.inversion()
 
 
 class Triangle(Func):

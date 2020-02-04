@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from collections import defaultdict
 from copy import deepcopy
+from collections import abc
 
 from fuzzy_fuss.func import Func
 
@@ -19,7 +20,9 @@ class Fuzz(object):
         return self._func
 
     def get_values(self, data, **kwargs):
-        raise NotImplementedError(f"'get_values' function of {self.__class__.__name__} is not implemented")
+        if isinstance(data, (abc.Sequence, abc.Iterable)):
+            data = np.array(data)
+        return self.func(data)
 
     def plot(self, data, ax=None, shade=0.2, **kwargs):
         values = self.get_values(data)
