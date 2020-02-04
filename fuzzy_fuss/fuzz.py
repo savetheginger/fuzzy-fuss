@@ -4,22 +4,19 @@ import pandas as pd
 from collections import defaultdict
 from copy import deepcopy
 
+from fuzzy_fuss.func import Func
+
 
 class Fuzz(object):
-    def __init__(self):
-        self._inverted = False
-        self._func = None
+    def __init__(self, func: Func = None):
+        self._func = func
 
     @property
     def func(self):
         if not self._func:
             raise NotImplementedError("Function not defined")
 
-        if self._inverted:
-            return lambda x: 1 - self._func(x)
-
         return self._func
-
 
     def get_values(self, data, **kwargs):
         raise NotImplementedError(f"'get_values' function of {self.__class__.__name__} is not implemented")
@@ -43,7 +40,7 @@ class Fuzz(object):
         return self.get_values(data) <= other.get_values(data)
 
     def invert(self):
-        self._inverted = not self._inverted
+        self._func = - self._func
 
     def complement(self):
         comp = deepcopy(self)
