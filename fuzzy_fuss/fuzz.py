@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from collections import defaultdict
 
 
@@ -22,7 +23,7 @@ class FuzzDict(dict):
         if names is None:
             names = self.keys()
 
-        kwargs_by_name = defaultdict(lambda: {}, **kwargs_by_name)
+        kwargs_by_name = defaultdict(lambda: {}, **(kwargs_by_name or {}))
 
         fig, ax = plt.subplots()
 
@@ -43,3 +44,6 @@ class FuzzDict(dict):
         data = np.arange(start, stop, step)
         self.plot(data, **kwargs)
 
+    def get_values(self, data):
+        return pd.DataFrame({name: self[name].get_values(data) for name in self.keys()},
+                            index=data, columns=self.keys())

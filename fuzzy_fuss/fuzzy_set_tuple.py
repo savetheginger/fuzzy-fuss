@@ -15,11 +15,18 @@ class FuzzySetTuple(Fuzz, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])
                   self.b + self.beta)
 
         self._intervals = iv.IntervalDict()
-        self._intervals[iv.open(-iv.inf, bounds[0])] = lambda x: 0
+        self._intervals[iv.open(-iv.inf, bounds[0])] = lambda x: 0.
         self._intervals[iv.closedopen(bounds[0], bounds[1])] = lambda x: (x - self.a + self.alpha)/self.alpha
-        self._intervals[iv.closed(bounds[1], bounds[2])] = lambda x: 1
+        self._intervals[iv.closed(bounds[1], bounds[2])] = lambda x: 1.
         self._intervals[iv.openclosed(bounds[2], bounds[3])] = lambda x: (self.b + self.beta - x)/self.beta
-        self._intervals[iv.open(bounds[3], iv.inf)] = lambda x: 0
+        self._intervals[iv.open(bounds[3], iv.inf)] = lambda x: 0.
+
+    @staticmethod
+    def from_points(v1, v2, v3, v4):
+        if not v1 <= v2 <= v3 <= v4:
+            raise ValueError("Values are not in order")
+
+        return FuzzySetTuple(v2, v3, v2-v1, v4-v3)
 
     @property
     def intervals(self):
@@ -40,4 +47,6 @@ if __name__ == '__main__':
     fsets['strict'] = FuzzySetTuple(3, 3, 0, 0)
 
     fsets.plot_range(0, 10, 0.1, title="Fuzzy sets", shade=0, kwargs_by_name={'small': {'shade': 0.2}})
+
+    print(fsets.get_values([0, 2, 4, 10]))
 
