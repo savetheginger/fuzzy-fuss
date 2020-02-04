@@ -20,6 +20,12 @@ class Func(object):
     def __neg__(self):
         return self.inversion()
 
+    @staticmethod
+    def _to_float(x):
+        if isinstance(x, np.ndarray):
+            return x.astype(float)
+        return float(x)
+
 
 class Triangle(Func):
     DEFAULT_NAME = 'triangle'
@@ -32,18 +38,12 @@ class Triangle(Func):
 
     def __call__(self, x):
             ba = self.b - self.a
-            y1 = (x - self.a) / ba if ba else self.a <= x
+            y1 = (x - self.a) / ba if ba else self._to_float(self.a <= x)
 
             cb = self.c - self.b
-            y2 = (self.c - x) / cb if cb else x <= self.c
+            y2 = (self.c - x) / cb if cb else self._to_float(x <= self.c)
 
-            if isinstance(x, np.ndarray):
-                r1 = np.where(y1 < y2, y1, y2)
-                r2 = np.where(r1 > 0, r1, 0)
-
-                return r2
-
-            return max((min(y1, y2)), 0)
+            return np.maximum(np.minimum(y1, y2), 0)
 
 
 class Trapezoid(Func):
@@ -58,17 +58,10 @@ class Trapezoid(Func):
 
     def __call__(self, x):
         ba = self.b - self.a
-        y1 = (x - self.a) / ba if ba else self.a <= x
+        y1 = (x - self.a) / ba if ba else self._to_float(self.a <= x)
 
         dc = self.d - self.c
-        y2 = (self.d - x) / dc if dc else x <= self.d
+        y2 = (self.d - x) / dc if dc else self._to_float(x <= self.d)
 
-        if isinstance(x, np.ndarray):
-            r1 = np.where(y1 < y2, y1, y2)
-            r2 = np.where(r1 < 1, r1, 1)
-            r3 = np.where(r2 > 0, r2, 0)
-
-            return r3
-
-        return max((min(y1, 1, y2)), 0)
+        return np.maximum(np.minimum(np.minimum(y1, y2), 1.), 0.)
 
