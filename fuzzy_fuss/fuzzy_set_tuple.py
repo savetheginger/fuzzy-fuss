@@ -39,5 +39,5 @@ if __name__ == '__main__':
     fsets['none'] = FuzzySetTuple(0, 0, 0, 0)
     fsets['strict'] = FuzzySetTuple(3, 3, 0, 0)
 
-    fsets.plot_range(0, 10, 0.1, title="Fuzzy sets")
+    fsets.plot_range(0, 10, 0.1, title="Fuzzy sets", shade=0, kwargs_by_name={'small': {'shade': 0.2}})
 
