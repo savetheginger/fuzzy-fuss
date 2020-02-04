@@ -6,7 +6,7 @@ fsets = FuzzDict()
 fsets['young'] = FuzzySetTuple.from_points(0, 0, 20, 40)
 fsets['middle-aged'] = FuzzySetTuple.from_points(35, 50, 60, 65)
 fsets['old'] = FuzzySetTuple.from_points(60, 70, 100, 100)
-fsets['not young'] = fsets['young'].complement()
+fsets['not young'] = - fsets['young']
 
 fsets.plot_range(0, 100, 1, title="Ages", shade=0)
 

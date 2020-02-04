@@ -50,6 +50,9 @@ class Fuzz(object):
         comp.invert()
         return comp
 
+    def __neg__(self):
+        return self.complement()
+
 
 class FuzzDict(dict):
     def plot(self, data, names=None, title=None, kwargs_by_name: dict = None, **kwargs,):
