@@ -54,8 +54,15 @@ class Trapezoid(Func):
         self.d = d
 
     def __call__(self, x):
-        y1 = (x - self.a) / (self.b - self.a)
-        y2 = (self.d - x) / (self.d - self.c)
+        def div(p1, p2, left=True):
+            pd = p2 - p1
+            if pd:
+                return (x - p1) / pd if left else (p2 - x) / pd
+
+            return p1 <= x if left else x <= p2
+
+        y1 = div(self.a, self.b)
+        y2 = div(self.c, self.d, False)
 
         if isinstance(x, np.ndarray):
             r1 = np.where(y1 < y2, y1, y2)

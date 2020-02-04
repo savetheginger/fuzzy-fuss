@@ -1,6 +1,4 @@
 from collections import namedtuple
-import numpy as np
-import intervals as iv
 
 from fuzzy_fuss.fuzz import Fuzz, FuzzDict
 from fuzzy_fuss.func import Trapezoid
