@@ -1,10 +1,11 @@
 from collections import namedtuple
 import numpy as np
-import matplotlib.pyplot as plt
 import intervals as iv
 
+from fuzzy_fuss.fuzz import Fuzz, FuzzDict
 
-class FuzzySetTuple(namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])):
+
+class FuzzySetTuple(Fuzz, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])):
     def __init__(self, *args, **kwargs):
         super(FuzzySetTuple, self).__init__()
 
@@ -27,28 +28,16 @@ class FuzzySetTuple(namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])):
     def get_value(self, x):
         return self._intervals[x](x)
 
-    def get_values(self, data):
+    def get_values(self, data, **kwargs):
         return np.array(tuple(map(lambda x: self.get_value(x), data)))
-
-    def plot(self, data, ax=None, **kwargs):
-        values = self.get_values(data)
-        if ax is None:
-            fig, ax = plt.subplots()
-        ax.plot(data, values, **kwargs)
 
 
 if __name__ == '__main__':
-    small = FuzzySetTuple(2, 4, 2, 3)
-    medium = FuzzySetTuple(7, 10, 2, 1)
-    none = FuzzySetTuple(0, 0, 0, 0)
-    strict = FuzzySetTuple(3, 3, 0, 0)
+    fsets = FuzzDict()
+    fsets['small'] = FuzzySetTuple(2, 4, 2, 3)
+    fsets['medium'] = FuzzySetTuple(7, 10, 2, 1)
+    fsets['none'] = FuzzySetTuple(0, 0, 0, 0)
+    fsets['strict'] = FuzzySetTuple(3, 3, 0, 0)
 
-    xdata = np.arange(0, 10, 0.1)
-    fig, ax = plt.subplots()
-    small.plot(xdata, ax=ax, label='small')
-    medium.plot(xdata, ax=ax, label='medium')
-    none.plot(xdata, ax=ax, label='none')
-    strict.plot(xdata, ax=ax, label='strict')
-    ax.legend(fancybox=True, framealpha=0.5)
-    plt.show()
+    fsets.plot_range(0, 10, 0.1, title="Fuzzy sets")
 
