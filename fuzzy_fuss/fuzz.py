@@ -2,9 +2,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from collections import defaultdict
+from copy import deepcopy
 
 
 class Fuzz(object):
+    def __init__(self):
+        self._inverted = False
+        self._func = None
+
+    @property
+    def func(self):
+        if not self._func:
+            raise NotImplementedError("Function not defined")
+
+        if self._inverted:
+            return lambda x: 1 - self._func(x)
+
+        return self._func
+
+
     def get_values(self, data, **kwargs):
         raise NotImplementedError(f"'get_values' function of {self.__class__.__name__} is not implemented")
 
@@ -16,6 +32,23 @@ class Fuzz(object):
         border, = ax.plot(data, values, **kwargs)
         if shade:
             ax.fill_between(data, values, facecolor=border.get_color(), alpha=shade, zorder=1)
+
+    def issubset(self, other, val_range=None, data=None):
+        if data is None and val_range is None:
+            raise ValueError("Either data or val_range must be provided")
+
+        if data is None:
+            data = np.arange(*val_range)
+
+        return self.get_values(data) <= other.get_values(data)
+
+    def invert(self):
+        self._inverted = not self._inverted
+
+    def complement(self):
+        comp = deepcopy(self)
+        comp.invert()
+        return comp
 
 
 class FuzzDict(dict):

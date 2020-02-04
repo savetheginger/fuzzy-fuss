@@ -21,6 +21,8 @@ class FuzzySetTuple(Fuzz, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])
         self._intervals[iv.openclosed(bounds[2], bounds[3])] = lambda x: (self.b + self.beta - x)/self.beta
         self._intervals[iv.open(bounds[3], iv.inf)] = lambda x: 0.
 
+        self._func = lambda x: self._intervals[x](x)
+
     @staticmethod
     def from_points(v1, v2, v3, v4):
         if not v1 <= v2 <= v3 <= v4:
@@ -33,7 +35,7 @@ class FuzzySetTuple(Fuzz, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])
         return self._intervals
 
     def get_value(self, x):
-        return self._intervals[x](x)
+        return self.func(x)
 
     def get_values(self, data, **kwargs):
         return np.array(tuple(map(lambda x: self.get_value(x), data)))
