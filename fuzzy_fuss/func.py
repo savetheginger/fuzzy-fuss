@@ -20,6 +20,14 @@ class Func(object):
     def __neg__(self):
         return self.inversion()
 
+    def __add__(self, other):
+        return Func(formula=(lambda *args: np.maximum(self(*args), other(*args))),
+                    name=f"{self.name} OR {other.name}")
+
+    def __mul__(self, other):
+        return Func(formula=(lambda *args: np.minimum(self(*args), other(*args))),
+                    name=f"{self.name} AND {other.name}")
+
     @staticmethod
     def _to_float(x):
         if isinstance(x, np.ndarray):

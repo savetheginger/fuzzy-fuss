@@ -50,6 +50,12 @@ class Fuzz(object):
         comp.invert()
         return comp
 
+    def __add__(self, other):
+        return Fuzz(self.func + other.func)
+
+    def __mul__(self, other):
+        return Fuzz(self.func * other.func)
+
     def __neg__(self):
         return self.complement()
 
