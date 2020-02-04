@@ -31,8 +31,11 @@ class Triangle(Func):
         self.c = c
 
     def __call__(self, x):
-            y1 = (x - self.a) / (self.b - self.a)
-            y2 = (self.c - x) / (self.c - self.b)
+            ba = self.b - self.a
+            y1 = (x - self.a) / ba if ba else self.a <= x
+
+            cb = self.c - self.b
+            y2 = (self.c - x) / cb if cb else x <= self.c
 
             if isinstance(x, np.ndarray):
                 r1 = np.where(y1 < y2, y1, y2)
@@ -54,15 +57,11 @@ class Trapezoid(Func):
         self.d = d
 
     def __call__(self, x):
-        def div(p1, p2, left=True):
-            pd = p2 - p1
-            if pd:
-                return (x - p1) / pd if left else (p2 - x) / pd
+        ba = self.b - self.a
+        y1 = (x - self.a) / ba if ba else self.a <= x
 
-            return p1 <= x if left else x <= p2
-
-        y1 = div(self.a, self.b)
-        y2 = div(self.c, self.d, False)
+        dc = self.d - self.c
+        y2 = (self.d - x) / dc if dc else x <= self.d
 
         if isinstance(x, np.ndarray):
             r1 = np.where(y1 < y2, y1, y2)
