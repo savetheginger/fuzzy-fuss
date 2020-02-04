@@ -1,29 +1,34 @@
 from collections import namedtuple
 import numpy as np
 import matplotlib.pyplot as plt
+import intervals as iv
 
 
 class FuzzySetTuple(namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])):
     def __init__(self, *args, **kwargs):
         super(FuzzySetTuple, self).__init__()
 
-        self._bounds = (self.a - self.alpha,
-                        self.a,
-                        self.b,
-                        self.b + self.beta)
+        bounds = (self.a - self.alpha,
+                  self.a,
+                  self.b,
+                  self.b + self.beta)
 
-        self._evaluators = (lambda x: 0,
-                            lambda x: (x - self.a + self.alpha)/self.alpha,
-                            lambda x: 1,
-                            lambda x: (self.b + self.beta - x)/self.beta,
-                            lambda x: 0)
+        self._intervals = iv.IntervalDict()
+        self._intervals[iv.open(-iv.inf, bounds[0])] = lambda x: 0
+        self._intervals[iv.closedopen(bounds[0], bounds[1])] = lambda x: (x - self.a + self.alpha)/self.alpha
+        self._intervals[iv.closed(bounds[1], bounds[2])] = lambda x: 1
+        self._intervals[iv.openclosed(bounds[2], bounds[3])] = lambda x: (self.b + self.beta - x)/self.beta
+        self._intervals[iv.open(bounds[3], iv.inf)] = lambda x: 0
 
-    def get_evaluators(self, data):
-        return np.array(self._evaluators)[np.searchsorted(self._bounds, data)]
+    @property
+    def intervals(self):
+        return self._intervals
+
+    def get_value(self, x):
+        return self._intervals[x](x)
 
     def get_values(self, data):
-        evaluators = self.get_evaluators(data)
-        return np.array(tuple(map(lambda x: x[0](x[1]), zip(evaluators, data))))
+        return np.array(tuple(map(lambda x: self.get_value(x), data)))
 
     def plot(self, data, ax=None, **kwargs):
         values = self.get_values(data)
