@@ -13,17 +13,21 @@ class RuleBaseParser(object):
         self._measurements = dict()
 
     @staticmethod
-    def match_rule(line):
-        line = line.replace('the ', '')
+    def match_rule(line_raw):
+        line = line_raw.replace('the ', '')
 
         m = re.fullmatch(RuleBaseParser.RULE_PATTERN, line, re.IGNORECASE)
         if not m:
             return
 
         md = m.groupdict()
-        prop = re.findall(RuleBaseParser.ATOM_PATTERN, md['propositions'], re.IGNORECASE)
-        connectives = [s.strip(' ') for s in re.findall(r" and | or ", md['propositions'])]
-        conclusion = re.fullmatch(RuleBaseParser.ATOM_PATTERN, md['conclusion']).groups()
+
+        try:
+            prop = re.findall(RuleBaseParser.ATOM_PATTERN, md['propositions'], re.IGNORECASE)
+            connectives = [s.strip(' ') for s in re.findall(r" and | or ", md['propositions'])]
+            conclusion = re.fullmatch(RuleBaseParser.ATOM_PATTERN, md['conclusion']).groups()
+        except AttributeError:
+            raise ValueError(f"Rule '{line_raw}' does not match the rule pattern")
 
         rule = Rule(name=md['name'], prop_atoms=prop, prop_connectives=connectives, conclusion=conclusion)
         return rule
