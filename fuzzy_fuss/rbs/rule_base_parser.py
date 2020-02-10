@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 
 from fuzzy_fuss.rbs.rule import Rule, Atom
 
@@ -11,8 +12,50 @@ class RuleBaseParser(object):
 
     def __init__(self):
         self._rules = dict()
-        self._variables = dict()
+        self._variables = defaultdict(lambda: dict())
         self._measurements = dict()
+        self._rbs_name = None
+        self._current_name = None
+
+    def parse(self, filename):
+        with open(filename) as f:
+            for line in f:
+                line = line.strip('\n')
+                if not line:
+                    continue
+
+                if self.parse_rule(line) or self.parse_measurement(line) or self.parse_tuple(line):
+                    continue
+
+                if not self._rbs_name:
+                    self._rbs_name = line
+                else:
+                    self._current_name = line
+
+        self._current_name = None
+
+    def parse_rule(self, line):
+        rule = self.match_rule(line)
+        if rule:
+            self._rules[rule.name] = rule
+            return True
+        return False
+
+    def parse_measurement(self, line):
+        meas = self.match_measurement(line)
+        if meas:
+            self._measurements[meas[0]] = meas[1]
+            return True
+        return False
+
+    def parse_tuple(self, line):
+        tup = self.match_tuple(line)
+        if tup:
+            if not self._current_name:
+                raise RuntimeError(f"Encountered a 4-tuple for unspecified variable: {line}")
+            self._variables[self._current_name][tup[0]] = tup[1]
+            return True
+        return False
 
     @staticmethod
     def match_tuple(line):
@@ -63,11 +106,5 @@ class RuleBaseParser(object):
 
 
 if __name__ == '__main__':
-    rl = r"Rule 1 If the driving is good and the journey_time is short then the tip will be big"
-    match = RuleBaseParser.match_rule(rl)
-    print(match or 'rule: no match')
-
-    meas = "journey_time = 9"
-    print(RuleBaseParser.match_measurement(meas) or "measurement: no match")
-
-    print(RuleBaseParser.match_tuple("bad 0 2 4 5.5"))
+    rbsp = RuleBaseParser()
+    rbsp.parse(r"C:\Users\anima\Documents\Aberdeen\MSc_AI\CS551J_KRR\code\fuzzy-fuss\examples\tipping_rulebase.txt")
