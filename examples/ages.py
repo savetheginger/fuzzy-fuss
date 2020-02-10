@@ -1,11 +1,11 @@
-from fuzzy_fuss.fuzz import FuzzDict
-from fuzzy_fuss.fuzzy_set_tuple import FuzzySetTuple
+from fuzzy_fuss.fuzz.fuzz import FuzzyVariable
+from fuzzy_fuss.fuzz.fuzzy4tuple import Fuzzy4Tuple
 
 
-fsets = FuzzDict()
-fsets['young'] = FuzzySetTuple.from_points(0, 0, 20, 40)
-fsets['middle-aged'] = FuzzySetTuple.from_points(35, 50, 60, 65)
-fsets['old'] = FuzzySetTuple.from_points(60, 70, 100, 100)
+fsets = FuzzyVariable()
+fsets['young'] = Fuzzy4Tuple.from_points(0, 0, 20, 40)
+fsets['middle-aged'] = Fuzzy4Tuple.from_points(35, 50, 60, 65)
+fsets['old'] = Fuzzy4Tuple.from_points(60, 70, 100, 100)
 fsets['not young'] = - fsets['young']
 fsets['young OR middle-aged'] = fsets['young'] + fsets['middle-aged']
 fsets['old AND middle-aged'] = fsets['old'] * fsets['middle-aged']
