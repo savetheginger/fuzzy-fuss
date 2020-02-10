@@ -7,11 +7,31 @@ class RuleBaseParser(object):
     RULE_PATTERN = r"(?P<name>Rule\s*\d+):{0,1} if (?P<propositions>.+) then (?P<conclusion>.+)"
     ATOM_PATTERN = r"(?P<variable>\w+) (?:is|will be) (?P<value>\w+)"
     MEAS_PATTERN = r"\s*(?P<variable>\w+)\s*=\s*(?P<value>\d+(\.\d*){0,1})\s*"
+    TUPLE_PATTERN = r"(?P<value>\w+)\s*(?P<numbers>[\s\d.]+)"
 
     def __init__(self):
         self._rules = dict()
         self._variables = dict()
         self._measurements = dict()
+
+    @staticmethod
+    def match_tuple(line):
+        m = re.match(RuleBaseParser.TUPLE_PATTERN, line)
+        if not m:
+            return
+        value = m.group('value')
+
+        nums = re.split(r'\s+', m.group('numbers'))
+
+        if len(nums) != 4:
+            raise ValueError(f"Matching a 4-tuple '{line}': expected 4 values, got {len(nums)}")
+
+        try:
+            num_nums = tuple(map(float, nums))
+        except ValueError:
+            raise ValueError(f"Invalid format for numerical values encountered in '{nums}'")
+
+        return value, num_nums
 
     @staticmethod
     def match_measurement(line):
@@ -49,3 +69,5 @@ if __name__ == '__main__':
 
     meas = "journey_time = 9"
     print(RuleBaseParser.match_measurement(meas) or "measurement: no match")
+
+    print(RuleBaseParser.match_tuple("bad 0 2 4 5.5"))
