@@ -14,6 +14,9 @@ class Func(object):
 
         return self._func(*args)
 
+    def __repr__(self):
+        return f"Function {self.name}"
+
     def inversion(self):
         return Func(formula=(lambda *args: 1 - self(*args)), name=f"{self.name} (inversion)")
 
@@ -53,6 +56,9 @@ class Triangle(Func):
 
             return np.maximum(np.minimum(y1, y2), 0)
 
+    def __repr__(self):
+        return f"{self.name.capitalize()} function with a={self.a}, b={self.b}, c={self.c}"
+
 
 class Trapezoid(Func):
     DEFAULT_NAME = 'trapezoid'
@@ -73,3 +79,5 @@ class Trapezoid(Func):
 
         return np.maximum(np.minimum(np.minimum(y1, y2), 1.), 0.)
 
+    def __repr__(self):
+        return f"{self.name.capitalize()} function with a={self.a}, b={self.b}, c={self.c}, d={self.d}"
