@@ -1,6 +1,7 @@
 from collections import namedtuple
 
-from fuzzy_fuss.fuzz.fuzz import FuzzySet, FuzzyVariable
+from fuzzy_fuss.fuzz.fuzzy_set import FuzzySet
+from fuzzy_fuss.fuzz.fuzzy_variable import FuzzyVariable
 from fuzzy_fuss.fuzz.func import Trapezoid
 
 
@@ -22,13 +23,13 @@ class Fuzzy4Tuple(FuzzySet, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'
 
 
 if __name__ == '__main__':
-    fsets = FuzzyVariable()
+    fsets = FuzzyVariable('Fuzzy sets')
     fsets['small'] = Fuzzy4Tuple(2, 4, 2, 3)
     fsets['medium'] = Fuzzy4Tuple(7, 10, 2, 1)
     fsets['none'] = Fuzzy4Tuple(0, 0, 0, 0)
     fsets['strict'] = Fuzzy4Tuple(3, 3, 0, 0)
 
-    fsets.plot_range(0, 10, 0.1, title="Fuzzy sets", shade=0, kwargs_by_name={'small': {'shade': 0.2}})
+    fsets.plot_range(0, 10, 0.1, shade=0, kwargs_by_name={'small': {'shade': 0.2}})
 
     print(fsets.get_values([0, 2, 4, 10]))
 
