@@ -1,5 +1,7 @@
 import re
 
+from fuzzy_fuss.rbs.rule import Rule
+
 
 class RuleBaseReader(object):
     RULE_PATTERN = r"(?P<name>Rule\s*\d+):{0,1} (?P<body>.+)"
@@ -20,7 +22,7 @@ class RuleBaseReader(object):
         prop = re.findall(r"[the ]*(?P<variable>\w+) is (?P<value>\w+)", body, re.IGNORECASE)
         connectives = [s.strip(' ') for s in re.findall(r" and | or ", body)]
 
-        return dict(name=md['name'], prop=prop, connectives=connectives)
+        return Rule(name=md['name'], prop_atoms=prop, prop_connectives=connectives, conclusion=(' ', ' '))
 
 
 if __name__ == '__main__':
