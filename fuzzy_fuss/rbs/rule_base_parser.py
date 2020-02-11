@@ -3,6 +3,7 @@ import re
 from fuzzy_fuss.rbs.rule import Rule, Atom
 from fuzzy_fuss.fuzz.fuzzy_variable import FuzzyVariable
 from fuzzy_fuss.fuzz.fuzzy4tuple import Fuzzy4Tuple
+from fuzzy_fuss.rbs.parsed_object import ParsedObjDict
 
 
 class RuleBase(object):
@@ -10,7 +11,7 @@ class RuleBase(object):
     TUPLE_PATTERN = r"(?P<value>\w+)\s*(?P<numbers>[\s\d.]+)"
 
     def __init__(self):
-        self.rules = set()
+        self.rules = ParsedObjDict(Rule)
         self.variables = dict()
         self.measurements = dict()
         self.name = None
@@ -25,7 +26,7 @@ class RuleBase(object):
                 if not line:
                     continue
 
-                if self.parse_rule(line) or self.parse_measurement(line) or self.parse_tuple(line):
+                if self.rules.parse(line) or self.parse_measurement(line) or self.parse_tuple(line):
                     continue
 
                 if not self.name:
@@ -35,13 +36,6 @@ class RuleBase(object):
                     self._current_name = line
 
         self._current_name = None
-
-    def parse_rule(self, line):
-        rule = Rule.match(line)
-        if rule:
-            self.rules.add(rule)
-            return True
-        return False
 
     def parse_measurement(self, line):
         meas = self.match_measurement(line)

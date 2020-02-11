@@ -1,26 +1,7 @@
 import re
 from typing import Tuple
 
-
-class ParsedObj(object):
-    PATTERN = None
-
-    @classmethod
-    def match(cls, line, silent=True, **kwargs):
-        if not cls.PATTERN:
-            raise NotImplementedError(f"Pattern for class {cls.__name__} not specified")
-
-        m = re.fullmatch(cls.PATTERN, line.replace('the ', ''), re.IGNORECASE)
-        if not m:
-            if silent:
-                return
-            raise RuntimeError(f"Failed to match '{line}' for class {cls.__name__} (pattern: {cls.PATTERN})")
-
-        return cls.process_match(m, **kwargs)
-
-    @staticmethod
-    def process_match(m, **kwargs):
-        raise NotImplementedError("Match processing method not implemented")
+from fuzzy_fuss.rbs.parsed_object import ParsedObj
 
 
 class Atom(tuple, ParsedObj):
@@ -85,4 +66,4 @@ class Rule(ParsedObj):
         conclusion = Atom.match(md['conclusion'], silent=False)
 
         rule = Rule(name=md['name'], prop_atoms=prop, prop_connectives=connectives, conclusion=conclusion)
-        return rule
+        return rule.name, rule
