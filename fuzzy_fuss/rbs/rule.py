@@ -14,21 +14,28 @@ class Atom(tuple, ParsedObj):
     def __repr__(self):
         return f"({self[0]} = {self[1]})"
 
-    @staticmethod
-    def process_match(m, numeric=False):
-        vals = m.groups()
-        if numeric:
-            try:
-                vals = (vals[0], float(vals[1]))
-            except ValueError:
-                raise ValueError(f"Expected numeric value, got '{vals[1]}' (in '{m.string}')")
-        return Atom(vals)
+    @classmethod
+    def process_match(cls, m, **kwargs):
+        vals = tuple(m.groupdict().values())
+        return cls(vals)
 
     @staticmethod
     def match_all(line, split_pattern=None):
         split_pattern = split_pattern or " and | or "
         props = re.split(split_pattern, line, re.IGNORECASE)
         return tuple(Atom.match(prop, silent=False) for prop in props)
+
+
+class Measurement(Atom):
+    PATTERN = r"\s*(?P<variable>\w+)\s*=\s*(?P<value>\d+(\.\d*){0,1})\s*"
+
+    def __new__(self, vals):
+        try:
+            vals_new = (vals[0], float(vals[1]))
+        except ValueError:
+            raise ValueError(f"Cannot convert {vals[1]} to float")
+
+        return super(Measurement, self).__new__(Measurement, vals_new)
 
 
 class Rule(ParsedObj):
@@ -57,13 +64,13 @@ class Rule(ParsedObj):
 
         return f"{self.name}: {prop} => {str(self.conclusion)}"
 
-    @staticmethod
-    def process_match(m, **kwargs):
+    @classmethod
+    def process_match(cls, m, **kwargs):
         md = m.groupdict()
 
         prop = Atom.match_all(md['propositions'])
         connectives = [s.strip(' ') for s in re.findall(r" and | or ", md['propositions'])]
         conclusion = Atom.match(md['conclusion'], silent=False)
 
-        rule = Rule(name=md['name'], prop_atoms=prop, prop_connectives=connectives, conclusion=conclusion)
+        rule = cls(name=md['name'], prop_atoms=prop, prop_connectives=connectives, conclusion=conclusion)
         return rule.name, rule

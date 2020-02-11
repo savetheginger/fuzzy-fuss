@@ -1,19 +1,18 @@
 import re
 
-from fuzzy_fuss.rbs.rule import Rule, Atom
+from fuzzy_fuss.rbs.rule import Rule, Atom, Measurement
 from fuzzy_fuss.fuzz.fuzzy_variable import FuzzyVariable
 from fuzzy_fuss.fuzz.fuzzy4tuple import Fuzzy4Tuple
 from fuzzy_fuss.rbs.parsed_object import ParsedObjDict
 
 
 class RuleBase(object):
-    MEAS_PATTERN = r"\s*(?P<variable>\w+)\s*=\s*(?P<value>\d+(\.\d*){0,1})\s*"
     TUPLE_PATTERN = r"(?P<value>\w+)\s*(?P<numbers>[\s\d.]+)"
 
     def __init__(self):
         self.rules = ParsedObjDict(Rule)
         self.variables = dict()
-        self.measurements = dict()
+        self.measurements = ParsedObjDict(Measurement, float)
         self.name = None
         self._current_name = None
 
@@ -26,7 +25,7 @@ class RuleBase(object):
                 if not line:
                     continue
 
-                if self.rules.parse(line) or self.parse_measurement(line) or self.parse_tuple(line):
+                if self.rules.parse(line) or self.measurements.parse(line) or self.parse_tuple(line):
                     continue
 
                 if not self.name:
@@ -36,13 +35,6 @@ class RuleBase(object):
                     self._current_name = line
 
         self._current_name = None
-
-    def parse_measurement(self, line):
-        meas = self.match_measurement(line)
-        if meas:
-            self.measurements[meas[0]] = meas[1]
-            return True
-        return False
 
     def parse_tuple(self, line):
         tup = self.match_tuple(line)
@@ -71,14 +63,6 @@ class RuleBase(object):
             raise ValueError(f"Invalid format for numerical values encountered in '{nums}'")
 
         return value, num_nums
-
-    @staticmethod
-    def match_measurement(line):
-        m = re.match(RuleBase.MEAS_PATTERN, line)
-        if not m:
-            return
-        md = m.groupdict()
-        return Atom((md['variable'], float(md['value'])))
 
 
 if __name__ == '__main__':
