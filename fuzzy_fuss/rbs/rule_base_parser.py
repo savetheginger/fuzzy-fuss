@@ -6,8 +6,6 @@ from fuzzy_fuss.fuzz.fuzzy4tuple import Fuzzy4Tuple
 
 
 class RuleBase(object):
-    RULE_PATTERN = r"(?P<name>Rule\s*\d+):{0,1} if (?P<propositions>.+) then (?P<conclusion>.+)"
-    ATOM_PATTERN = r"(?P<variable>\w+) (?:is|will be) (?P<value>\w+)"
     MEAS_PATTERN = r"\s*(?P<variable>\w+)\s*=\s*(?P<value>\d+(\.\d*){0,1})\s*"
     TUPLE_PATTERN = r"(?P<value>\w+)\s*(?P<numbers>[\s\d.]+)"
 
@@ -39,7 +37,7 @@ class RuleBase(object):
         self._current_name = None
 
     def parse_rule(self, line):
-        rule = self.match_rule(line)
+        rule = Rule.match(line)
         if rule:
             self.rules.add(rule)
             return True
@@ -87,26 +85,6 @@ class RuleBase(object):
             return
         md = m.groupdict()
         return Atom((md['variable'], float(md['value'])))
-
-    @staticmethod
-    def match_rule(line_raw):
-        line = line_raw.replace('the ', '')
-
-        m = re.fullmatch(RuleBase.RULE_PATTERN, line, re.IGNORECASE)
-        if not m:
-            return
-
-        md = m.groupdict()
-
-        try:
-            prop = re.findall(RuleBase.ATOM_PATTERN, md['propositions'], re.IGNORECASE)
-            connectives = [s.strip(' ') for s in re.findall(r" and | or ", md['propositions'])]
-            conclusion = re.fullmatch(RuleBase.ATOM_PATTERN, md['conclusion']).groups()
-        except AttributeError:
-            raise ValueError(f"Rule '{line_raw}' does not match the rule pattern")
-
-        rule = Rule(name=md['name'], prop_atoms=prop, prop_connectives=connectives, conclusion=conclusion)
-        return rule
 
 
 if __name__ == '__main__':
