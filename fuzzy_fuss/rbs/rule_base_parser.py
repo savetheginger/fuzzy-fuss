@@ -1,6 +1,6 @@
 import re
 
-from fuzzy_fuss.rbs.rule import Rule, Atom, Measurement
+from fuzzy_fuss.rbs.rule import Rule, Measurement
 from fuzzy_fuss.fuzz.fuzzy_variable import FuzzyVariable
 from fuzzy_fuss.fuzz.fuzzy4tuple import Fuzzy4Tuple
 from fuzzy_fuss.rbs.parsed_object import ParsedObjDict
