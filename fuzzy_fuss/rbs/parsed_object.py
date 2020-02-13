@@ -23,8 +23,8 @@ class ParsedObj(object):
 
 
 class ParsedObjDict(dict):
-    def __init__(self, object_type: type(ParsedObj), item_type=None):
-        super().__init__()
+    def __init__(self, object_type: type(ParsedObj), item_type=None, **kwargs):
+        super().__init__(**kwargs)
         self._object_type = object_type
         self._item_type = item_type or object_type
 
