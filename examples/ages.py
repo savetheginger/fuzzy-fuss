@@ -15,3 +15,10 @@ fsets.plot_range(0, 100, 1, shade=0,
                                  'old AND middle-aged': {'shade': 0.5}})
 
 print(fsets.get_values([20, 37, 55, 63, 85]))
+
+cf = FuzzyVariable("Compositions")
+m = fsets['middle-aged']
+cf['original'] = m
+cf['max-min'] = m.cut(0.5)
+cf['max-product'] = m.cut(0.5, 'max-product')
+cf.plot_range(0, 100, 1)
