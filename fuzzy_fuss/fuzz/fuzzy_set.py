@@ -56,3 +56,30 @@ class FuzzySet(object):
 
     def __neg__(self):
         return self.complement()
+
+    def cut(self, cut: float, method='max-min'):
+        if not isinstance(cut, float):
+            raise TypeError(f"Cut level must be a float (got {type(cut)})")
+
+        if not 0 <= cut <= 1:
+            raise ValueError(f"Cut level must be between 0 and 1 (got {cut})")
+
+        if method == 'max-min':
+            func = self._min(cut)
+        elif method == 'max-product':
+            func = self._product(cut)
+        else:
+            raise ValueError(f"Unknown cut method: {method}")
+
+        return FuzzySet(func)
+
+    def _min(self, cut: float):
+        """For max-min composition: perform an alpha-cut on the function"""
+
+        return lambda x: np.minimum(self.membership_function(x), cut)
+
+    def _product(self, cut):
+        """For max-product composition: multiply the function by the max level"""
+
+        return self.membership_function * cut
+

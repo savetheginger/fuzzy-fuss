@@ -24,12 +24,22 @@ class Func(object):
         return self.inversion()
 
     def __add__(self, other):
-        return Func(formula=(lambda *args: np.maximum(self(*args), other(*args))),
-                    name=f"{self.name} OR {other.name}")
+        if isinstance(other, Func):
+            return Func(formula=(lambda *args: np.maximum(self(*args), other(*args))),
+                        name=f"{self.name} OR {other.name}")
+
+        raise TypeError(f"Expected type Func, got {type(other)}")
 
     def __mul__(self, other):
-        return Func(formula=(lambda *args: np.minimum(self(*args), other(*args))),
-                    name=f"{self.name} AND {other.name}")
+        if isinstance(other, Func):
+            return Func(formula=(lambda *args: np.minimum(self(*args), other(*args))),
+                        name=f"{self.name} AND {other.name}")
+
+        if isinstance(other, (int, float)):
+            return Func(formula=lambda *args: other * self(*args),
+                        name=f"{other} * {self.name}")
+
+        raise TypeError(f"Expected type Func, got {type(other)}")
 
     @staticmethod
     def _to_float(x):
