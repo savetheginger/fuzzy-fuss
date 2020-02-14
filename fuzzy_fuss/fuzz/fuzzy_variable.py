@@ -32,7 +32,11 @@ class FuzzyVariable(dict):
         for name in names:
             self[name].plot(data, ax=ax, label=name, **{**kwargs, **kwargs_by_name[name]})
 
-        ax.set_title(title or self.name)
+        ax.grid(color='lightgray')
+        ax.axhline(0, color='darkgray', zorder=1, lw=3)
+        ax.axhline(1, color='dimgray', zorder=1, lw=1)
+
+        ax.set_title(title or f"Fuzzy variable '{self.name}'")
 
         ax.set_xlabel("x values")
         ax.set_ylabel("membership values")
