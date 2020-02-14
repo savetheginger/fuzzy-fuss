@@ -40,8 +40,3 @@ class RuleBase(object):
         self.variables.pop(None)
 
         self._current_name = None
-
-
-if __name__ == '__main__':
-    rb = RuleBase()
-    rb.parse(r"C:\Users\anima\Documents\Aberdeen\MSc_AI\CS551J_KRR\code\fuzzy-fuss\examples\tipping_rulebase.txt")
