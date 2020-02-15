@@ -73,7 +73,12 @@ class FuzzySet(object):
         return FuzzySet(self.membership_function + other.membership_function)
 
     def __mul__(self, other):
-        return FuzzySet(self.membership_function * other.membership_function)
+        if isinstance(other, FuzzySet):
+            return FuzzySet(self.membership_function * other.membership_function)
+        if isinstance(other, (int, float)):
+            return FuzzySet(self.membership_function * other)
+        else:
+            raise TypeError(f"__mul__ undefined for {type(self)} and {type(other)}")
 
     def __neg__(self):
         return self.complement()

@@ -22,6 +22,7 @@ class Func(object):
     def support(self):
         if not self._support:
             raise NotImplementedError(f"Support of a fuzzy membership function {type(self)} is not defined")
+        return self._support
 
     def inversion(self):
         return Func(formula=(lambda *args: 1 - self(*args)), name=f"{self.name} (inversion)",

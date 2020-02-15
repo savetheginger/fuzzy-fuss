@@ -28,6 +28,10 @@ class Rule(object):
         self.conclusion = conclusion
 
     @property
+    def prop_names(self):
+        return tuple(a.name for a in self.prop_atoms)
+
+    @property
     def all_atoms(self):
         return self.prop_atoms + (self.conclusion,)
 
@@ -43,14 +47,21 @@ class Rule(object):
 
         return f"{self.name}: {prop} => {str(self.conclusion)}"
 
-    def plot(self, variables, measurements=None, axes=None, fig=None, title=None):
+    def plot(self, variables, measurements=None, axes=None, fig=None, title=None, **kwargs):
         if axes is None:
             fig, axes = plt.subplots(1, len(self.prop_atoms)+1, sharey='all', figsize=(8, 4))
 
         markers = defaultdict(lambda: None, measurements)
 
         for i, (a_name, a_value) in enumerate(self.all_atoms):
-            variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}", marker=markers[a_name])
+            variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}", marker=markers[a_name], **kwargs)
+
+        if measurements:
+            out_cut = self.compute_weight(variables, measurements)
+            conclusion_cut = variables[self.conclusion[0]][self.conclusion[1]] * out_cut
+            conclusion_cut.plot(ax=axes[-1], **kwargs)
+            axes[-1].axhline(out_cut, lw=2, color='crimson', label="Weight")
+            axes[-1].legend(fancybox=True, framealpha=0.5)
 
         for ax in axes:
             ax.grid(color='lightgray')
@@ -64,3 +75,20 @@ class Rule(object):
 
         plt.show()
 
+    def compute_weight(self, variables: dict, measurements: dict):
+        conn = set(self.prop_connectives)
+        if len(conn) > 1:
+            raise RuntimeError("Rule evaluation for multiple connectives types is not implemented")  # TODO
+
+        conn = tuple(conn)[0]
+
+        cuts = []
+        for a_name, a_value in self.prop_atoms:
+            try:
+                cuts.append(variables[a_name][a_value].get_values(measurements[a_name]))
+            except KeyError:
+                raise ValueError(f"Missing data for variable {a_name}")
+
+        output_cut = min(cuts) if conn.lower() == 'and' else max(cuts)
+
+        return output_cut
