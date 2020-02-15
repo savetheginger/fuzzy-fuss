@@ -10,4 +10,4 @@ for fv in rb.variables.values():
     fv.plot_range(margin=10)
 
 for fr in rb.rules.values():
-    fr.plot(rb.variables)
+    fr.plot(rb.variables, measurements=rb.measurements)

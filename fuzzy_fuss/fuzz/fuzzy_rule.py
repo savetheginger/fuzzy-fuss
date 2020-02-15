@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from collections import defaultdict
 
 from typing import Tuple
 
@@ -42,12 +43,14 @@ class Rule(object):
 
         return f"{self.name}: {prop} => {str(self.conclusion)}"
 
-    def plot(self, variables, axes=None, fig=None, title=None):
+    def plot(self, variables, measurements=None, axes=None, fig=None, title=None):
         if axes is None:
-            fig, axes = plt.subplots(1, len(self.prop_atoms)+1, sharey='all', figsize=(6, 3))
+            fig, axes = plt.subplots(1, len(self.prop_atoms)+1, sharey='all', figsize=(8, 4))
+
+        markers = defaultdict(lambda: None, measurements)
 
         for i, (a_name, a_value) in enumerate(self.all_atoms):
-            variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}")
+            variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}", marker=markers[a_name])
 
         for ax in axes:
             ax.grid(color='lightgray')

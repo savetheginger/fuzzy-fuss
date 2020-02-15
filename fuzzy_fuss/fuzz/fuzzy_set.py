@@ -29,7 +29,7 @@ class FuzzySet(object):
             data = np.array(data)
         return self.membership_function(data)
 
-    def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, **kwargs):
+    def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, **kwargs):
         if data is None:
             data = np.arange(*self.get_support(margin=margin))
 
@@ -41,6 +41,13 @@ class FuzzySet(object):
         border, = ax.plot(data, values, **kwargs)
         if shade:
             ax.fill_between(data, values, facecolor=border.get_color(), alpha=shade, zorder=1)
+
+        if marker:
+            marker_val = self.get_values(marker)
+            ax.axvline(marker, lw=1, color='k', linestyle='-.', label="Meas.")
+            ax.axhline(marker_val, lw=1, color='k', linestyle='--')
+            ax.plot(marker, marker_val, '*', color='crimson', markersize=10)
+            ax.legend(fancybox=True, framealpha=0.5)
 
         if title:
             ax.set_title(title)
