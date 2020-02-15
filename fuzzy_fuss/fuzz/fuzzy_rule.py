@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from typing import Tuple
 
 
@@ -24,6 +26,10 @@ class Rule(object):
         self.prop_connectives = prop_connectives
         self.conclusion = conclusion
 
+    @property
+    def all_atoms(self):
+        return self.prop_atoms + (self.conclusion,)
+
     def __repr__(self):
         pc = self.prop_connectives
         pa = self.prop_atoms
@@ -35,3 +41,23 @@ class Rule(object):
             prop += f" {str(pa[i+1])}"
 
         return f"{self.name}: {prop} => {str(self.conclusion)}"
+
+    def plot(self, variables, axes=None, fig=None, title=None):
+        if axes is None:
+            fig, axes = plt.subplots(1, len(self.prop_atoms)+1, sharey='all', figsize=(6, 3))
+
+        for i, (a_name, a_value) in enumerate(self.all_atoms):
+            variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}")
+
+        for ax in axes:
+            ax.grid(color='lightgray')
+            ax.axhline(0, color='darkgray', zorder=1, lw=3)
+            ax.axhline(1, color='dimgray', zorder=1, lw=1)
+            ax.set_xlabel("x values")
+        axes[0].set_ylabel("membership values")
+
+        fig.suptitle(title or str(self))
+        fig.subplots_adjust(top=0.8)
+
+        plt.show()
+
