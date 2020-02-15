@@ -53,14 +53,15 @@ class Rule(object):
 
         markers = defaultdict(lambda: None, measurements)
 
-        for i, (a_name, a_value) in enumerate(self.all_atoms):
+        for i, (a_name, a_value) in enumerate(self.prop_atoms):
             variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}", marker=markers[a_name], **kwargs)
 
+        conc = variables[self.conclusion[0]][self.conclusion[1]]
         if measurements:
-            out_cut, conclusion_cut = self.evaluate(variables, measurements)
-            conclusion_cut.plot(ax=axes[-1], **kwargs)
-            axes[-1].axhline(out_cut, lw=2, color='crimson', label="Weight")
-            axes[-1].legend(fancybox=True, framealpha=0.5)
+            out_cut = self.compute_weight(variables, measurements)
+            conc.plot_cut(out_cut, ax=axes[-1], **kwargs)
+        else:
+            conc.plot(ax=axes[-1], **kwargs)
 
         for ax in axes:
             ax.grid(color='lightgray')
@@ -94,7 +95,14 @@ class Rule(object):
 
     def evaluate(self, variables, measurements):
         weight = self.compute_weight(variables, measurements)
-        return weight, variables[self.conclusion[0]][self.conclusion[1]] * weight
+        return weight, self.get_conclusion(variables, weight)
+
+    def get_conclusion(self, variables, weight=None):
+        conc = variables[self.conclusion[0]][self.conclusion[1]]
+        if weight:
+            conc = conc * weight
+
+        return conc
 
 
 class RuleSet(dict):
@@ -117,14 +125,26 @@ class RuleSet(dict):
         self._check_rule_type(rule)
         self[rule.name] = rule
 
+    def get_partial_conclusions(self, variables, weights=None):
+        weights = weights or len(self) * [None]
+        conclusions = [r.get_conclusion(variables, weights[i]) for i, r in enumerate(self)]
+        return conclusions
+
+    def sum(self, variables, weights):
+        conclusions = self.get_partial_conclusions(variables, weights)
+
+        conc_sum = conclusions[0]
+        for conc in conclusions:
+            conc_sum += conc
+
+        return conc_sum
+
+    def compute_weights(self, variables, measurements):
+        return [rule.compute_weight(variables, measurements) for rule in self]
+
     def evaluate(self, variables: dict, measurements: dict):
-        conclusions = []
+        weights = self.compute_weights(variables, measurements)
 
-        for rule in self:
-            conclusions.append(rule.evaluate(variables, measurements)[1])
-
-        compound_conclusion = conclusions[0]
-        for conc in conclusions[1:]:
-            compound_conclusion += conc
+        compound_conclusion = self.sum(variables, weights)
 
         return compound_conclusion

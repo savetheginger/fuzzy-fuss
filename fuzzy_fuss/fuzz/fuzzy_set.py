@@ -29,6 +29,18 @@ class FuzzySet(object):
             data = np.array(data)
         return self.membership_function(data)
 
+    def plot_cut(self, cut, ax=None, show=False, **kwargs):
+        if ax is None:
+            fig, ax = plt.subplots()
+
+        self.plot(ax=ax, **kwargs, label="original")
+        (self * cut).plot(ax=ax, **kwargs, label=f"cut")
+        ax.axhline(cut, lw=2, color='crimson', label=f"{cut:.2f}")
+        ax.legend(fancybox=True, framealpha=0.5)
+
+        if show:
+            plt.show()
+
     def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, show=False, **kwargs):
         if data is None:
             data = np.arange(*self.get_support(margin=margin))
