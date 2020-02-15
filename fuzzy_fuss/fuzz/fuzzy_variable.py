@@ -21,6 +21,11 @@ class FuzzyVariable(dict):
         k = [f"'{key}'" for key in self.keys()]
         return f"Fuzzy variable with values: {', '.join(k) if k else '(none yet)'}"
 
+    def get_support(self, margin=0):
+        s_low = min(v.support[0] for v in self.values()) - margin
+        s_high = max(v.support[1] for v in self.values()) + margin
+        return s_low, s_high
+
     def plot(self, data, names=None, title=None, kwargs_by_name: dict = None, **kwargs,):
         if names is None:
             names = self.keys()
@@ -45,8 +50,9 @@ class FuzzyVariable(dict):
 
         plt.show()
 
-    def plot_range(self, start, stop, step, **kwargs):
-        data = np.arange(start, stop, step)
+    def plot_range(self, *args, margin=10, **kwargs):
+        args = args or self.get_support(margin=margin)
+        data = np.arange(*args)
         self.plot(data, **kwargs)
 
     def get_values(self, data):

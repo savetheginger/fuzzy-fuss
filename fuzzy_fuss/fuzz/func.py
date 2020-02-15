@@ -4,9 +4,10 @@ import numpy as np
 class Func(object):
     DEFAULT_NAME = ''
 
-    def __init__(self, *args, formula=None, name=None, **kwargs):
+    def __init__(self, *args, formula=None, name=None, support=None, **kwargs):
         self.name = name or self.DEFAULT_NAME
         self._func = formula
+        self._support = support
 
     def __call__(self, *args):
         if self._func is None:
@@ -17,27 +18,42 @@ class Func(object):
     def __repr__(self):
         return f"Function {self.name}"
 
+    @property
+    def support(self):
+        if not self._support:
+            raise NotImplementedError(f"Support of a fuzzy membership function {type(self)} is not defined")
+
     def inversion(self):
-        return Func(formula=(lambda *args: 1 - self(*args)), name=f"{self.name} (inversion)")
+        return Func(formula=(lambda *args: 1 - self(*args)), name=f"{self.name} (inversion)",
+                    support=self.support)  # TODO: correct support - add core
 
     def __neg__(self):
         return self.inversion()
 
     def __add__(self, other):
         if isinstance(other, Func):
+            s_low = min(self.support[0], other.support[0]),
+            s_high = max(self.support[1], other.support[1])
+
             return Func(formula=(lambda *args: np.maximum(self(*args), other(*args))),
-                        name=f"{self.name} OR {other.name}")
+                        name=f"{self.name} OR {other.name}",
+                        support=(s_low, s_high))
 
         raise TypeError(f"Expected type Func, got {type(other)}")
 
     def __mul__(self, other):
         if isinstance(other, Func):
+            s_low = max(self.support[0], other.support[0]),
+            s_high = min(self.support[1], other.support[1])
+
             return Func(formula=(lambda *args: np.minimum(self(*args), other(*args))),
-                        name=f"{self.name} AND {other.name}")
+                        name=f"{self.name} AND {other.name}",
+                        support=tuple(sorted((s_low, s_high))))
 
         if isinstance(other, (int, float)):
             return Func(formula=lambda *args: other * self(*args),
-                        name=f"{other} * {self.name}")
+                        name=f"{other} * {self.name}",
+                        support=self.support)
 
         raise TypeError(f"Expected type Func, got {type(other)}")
 
@@ -69,6 +85,10 @@ class Triangle(Func):
     def __repr__(self):
         return f"{self.name.capitalize()} function with a={self.a}, b={self.b}, c={self.c}"
 
+    @property
+    def support(self):
+        return self.a, self.c
+
 
 class Trapezoid(Func):
     DEFAULT_NAME = 'trapezoid'
@@ -91,3 +111,7 @@ class Trapezoid(Func):
 
     def __repr__(self):
         return f"{self.name.capitalize()} function with a={self.a}, b={self.b}, c={self.c}, d={self.d}"
+
+    @property
+    def support(self):
+        return self.a, self.d

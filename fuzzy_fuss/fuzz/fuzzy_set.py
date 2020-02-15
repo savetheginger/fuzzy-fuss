@@ -17,12 +17,21 @@ class FuzzySet(object):
 
         return self._mf
 
+    @property
+    def support(self):
+        return self._mf.support
+
+    def get_support(self, margin=0):
+        return self.support[0] - margin, self.support[0] + margin
+
     def get_values(self, data, **kwargs):
         if isinstance(data, (abc.Sequence, abc.Iterable)):
             data = np.array(data)
         return self.membership_function(data)
 
-    def plot(self, data, ax=None, shade=0.2, **kwargs):
+    def plot(self, data=None, ax=None, shade=0.2, margin=0, **kwargs):
+        if data is None:
+            data = np.arange(*self.get_support(margin=margin))
         values = self.get_values(data)
         if ax is None:
             fig, ax = plt.subplots()
