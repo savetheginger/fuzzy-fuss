@@ -1,13 +1,13 @@
-from fuzzy_fuss.rbs.rule import Rule, Measurement
+from fuzzy_fuss.rbs.parsed_rule import ParsedRule, ParsedMeasurement
 from fuzzy_fuss.rbs.parsed_object import ParsedObjDict
 from fuzzy_fuss.rbs.variable import ParsedVariable
 
 
 class RuleBase(object):
     def __init__(self):
-        self.rules = ParsedObjDict(Rule)
+        self.rules = ParsedObjDict(ParsedRule)
         self.variables = {}
-        self.measurements = ParsedObjDict(Measurement, float)
+        self.measurements = ParsedObjDict(ParsedMeasurement, float)
         self.name = None
         self._current_name = None
 
