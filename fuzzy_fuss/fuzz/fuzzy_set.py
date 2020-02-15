@@ -29,7 +29,7 @@ class FuzzySet(object):
             data = np.array(data)
         return self.membership_function(data)
 
-    def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, **kwargs):
+    def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, show=False, **kwargs):
         if data is None:
             data = np.arange(*self.get_support(margin=margin))
 
@@ -52,6 +52,9 @@ class FuzzySet(object):
         if title:
             ax.set_title(title)
 
+        if show:
+            plt.show()
+
     def issubset(self, other, val_range=None, data=None):
         if data is None and val_range is None:
             raise ValueError("Either data or val_range must be provided")
@@ -70,7 +73,10 @@ class FuzzySet(object):
         return comp
 
     def __add__(self, other):
-        return FuzzySet(self.membership_function + other.membership_function)
+        if isinstance(other, FuzzySet):
+            return FuzzySet(self.membership_function + other.membership_function)
+        else:
+            raise TypeError(f"item not an instance of FuzzySet (got {type(other)})")
 
     def __mul__(self, other):
         if isinstance(other, FuzzySet):

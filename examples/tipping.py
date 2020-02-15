@@ -1,5 +1,6 @@
 import os
 
+from fuzzy_fuss.fuzz.fuzzy_rule import RuleSet
 from fuzzy_fuss.rbs.rule_base_parser import RuleBase
 
 rb = RuleBase()
@@ -11,3 +12,10 @@ for fv in rb.variables.values():
 
 for fr in rb.rules.values():
     fr.plot(rb.variables, measurements=rb.measurements, shade=0.1)
+
+ruleset = RuleSet()
+for rule in rb.rules.values():
+    ruleset.add_rule(rule)
+
+conc = ruleset.evaluate(rb.variables, rb.measurements)
+conc.plot(show=True)

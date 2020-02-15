@@ -33,7 +33,7 @@ class Func(object):
 
     def __add__(self, other):
         if isinstance(other, Func):
-            s_low = min(self.support[0], other.support[0]),
+            s_low = min(self.support[0], other.support[0])
             s_high = max(self.support[1], other.support[1])
 
             return Func(formula=(lambda *args: np.maximum(self(*args), other(*args))),

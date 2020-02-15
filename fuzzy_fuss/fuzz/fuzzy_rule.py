@@ -29,7 +29,7 @@ class Rule(object):
 
     @property
     def prop_names(self):
-        return tuple(a.name for a in self.prop_atoms)
+        return tuple(a[0] for a in self.prop_atoms)
 
     @property
     def all_atoms(self):
@@ -57,8 +57,7 @@ class Rule(object):
             variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}", marker=markers[a_name], **kwargs)
 
         if measurements:
-            out_cut = self.compute_weight(variables, measurements)
-            conclusion_cut = variables[self.conclusion[0]][self.conclusion[1]] * out_cut
+            out_cut, conclusion_cut = self.evaluate(variables, measurements)
             conclusion_cut.plot(ax=axes[-1], **kwargs)
             axes[-1].axhline(out_cut, lw=2, color='crimson', label="Weight")
             axes[-1].legend(fancybox=True, framealpha=0.5)
@@ -92,3 +91,40 @@ class Rule(object):
         output_cut = min(cuts) if conn.lower() == 'and' else max(cuts)
 
         return output_cut
+
+    def evaluate(self, variables, measurements):
+        weight = self.compute_weight(variables, measurements)
+        return weight, variables[self.conclusion[0]][self.conclusion[1]] * weight
+
+
+class RuleSet(dict):
+    def __init__(self):
+        super(RuleSet, self).__init__()
+
+    def __setitem__(self, key, value):
+        self._check_rule_type(value)
+        super(RuleSet, self).__setitem__(key, value)
+
+    def __iter__(self):
+        yield from set(self.values())
+
+    @staticmethod
+    def _check_rule_type(value):
+        if not isinstance(value, Rule):
+            raise TypeError(f"'value' must be of type Rule (got {type(value)})")
+
+    def add_rule(self, rule: Rule):
+        self._check_rule_type(rule)
+        self[rule.name] = rule
+
+    def evaluate(self, variables: dict, measurements: dict):
+        conclusions = []
+
+        for rule in self:
+            conclusions.append(rule.evaluate(variables, measurements)[1])
+
+        compound_conclusion = conclusions[0]
+        for conc in conclusions[1:]:
+            compound_conclusion += conc
+
+        return compound_conclusion
