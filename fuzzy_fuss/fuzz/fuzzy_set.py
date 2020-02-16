@@ -33,9 +33,9 @@ class FuzzySet(object):
         if ax is None:
             fig, ax = plt.subplots()
 
-        self.plot(ax=ax, **kwargs, label="original")
-        (self * cut).plot(ax=ax, **kwargs, label=f"cut")
-        ax.axhline(cut, lw=2, color='crimson', label=f"{cut:.2f}")
+        self.plot(ax=ax, **kwargs)
+        (self * cut).plot(ax=ax, **kwargs)
+        ax.axhline(cut, lw=1, color='k', linestyle=':', label=f"{cut:.2f}")
         ax.legend(fancybox=True, framealpha=0.5)
 
         if show:
