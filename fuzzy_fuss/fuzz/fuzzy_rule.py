@@ -99,7 +99,7 @@ class Rule(object):
 
     def get_conclusion(self, variables, weight=None):
         conc = variables[self.conclusion[0]][self.conclusion[1]]
-        if weight:
+        if weight is not None:
             conc = conc * weight
 
         return conc
@@ -159,14 +159,16 @@ class RuleSet(dict):
 
         fig, axes = plt.subplots(1, len(self)+1, figsize=(15, 4), sharey='all', sharex='all')
         for i, conc in enumerate(conclusions):
-            conc.plot_cut(ax=axes[i], cut=weights[rules[i].name], title=f"{rules[i].name}: {rules[i].conclusion}")
+            conc.plot_cut(ax=axes[i], cut=weights[rules[i].name], title=f"{rules[i].name} {rules[i].conclusion}")
             axes[i].grid(color='lightgray')
 
         for i, conc in enumerate(conclusions_cut):
-            conc.plot(ax=axes[-1], shade=0.1, label=rules[i].name)
-        self.sum(variables, weights).plot(ax=axes[-1], shade=0, zorder=1,
+            conc.plot(ax=axes[-1], label=rules[i].name, linewidth=1, linestyle='--')
+        self.sum(variables, weights).plot(ax=axes[-1], shade=0, color='k',
                                           title="Aggregate conclusion", label="Aggregate")
         axes[-1].grid(color='lightgray')
 
         axes[-1].legend(fancybox=True, framealpha=0.5)
+
+        fig.subplots_adjust(left=0.05, right=0.95)
         plt.show()
