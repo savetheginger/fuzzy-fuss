@@ -126,8 +126,8 @@ class RuleSet(dict):
         self[rule.name] = rule
 
     def get_partial_conclusions(self, variables, weights=None):
-        weights = weights or len(self) * [None]
-        conclusions = [r.get_conclusion(variables, weights[i]) for i, r in enumerate(self)]
+        weights = weights or defaultdict(lambda: None)
+        conclusions = [rule.get_conclusion(variables, weights[rule.name]) for rule in self]
         return conclusions
 
     def sum(self, variables, weights):
@@ -140,11 +140,33 @@ class RuleSet(dict):
         return conc_sum
 
     def compute_weights(self, variables, measurements):
-        return [rule.compute_weight(variables, measurements) for rule in self]
+        return {rule.name: rule.compute_weight(variables, measurements) for rule in self}
 
     def evaluate(self, variables: dict, measurements: dict):
+        # TODO: this assumes the conclusion of each rule is the same variable type
         weights = self.compute_weights(variables, measurements)
 
         compound_conclusion = self.sum(variables, weights)
 
         return compound_conclusion
+
+    def plot_eval(self, variables: dict, measurements: dict):
+        weights = self.compute_weights(variables, measurements)
+        conclusions = self.get_partial_conclusions(variables)
+        conclusions_cut = self.get_partial_conclusions(variables, weights)
+
+        rules = list(self)
+
+        fig, axes = plt.subplots(1, len(self)+1, figsize=(15, 4), sharey='all', sharex='all')
+        for i, conc in enumerate(conclusions):
+            conc.plot_cut(ax=axes[i], cut=weights[rules[i].name], title=f"{rules[i].name}: {rules[i].conclusion}")
+            axes[i].grid(color='lightgray')
+
+        for i, conc in enumerate(conclusions_cut):
+            conc.plot(ax=axes[-1], shade=0.1, label=rules[i].name)
+        self.sum(variables, weights).plot(ax=axes[-1], shade=0, zorder=1,
+                                          title="Aggregate conclusion", label="Aggregate")
+        axes[-1].grid(color='lightgray')
+
+        axes[-1].legend(fancybox=True, framealpha=0.5)
+        plt.show()
