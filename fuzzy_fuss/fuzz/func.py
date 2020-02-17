@@ -64,6 +64,11 @@ class Func(object):
             return x.astype(float)
         return float(x)
 
+    def make(self, **kwargs):
+        defaults = dict(name=self.name, support=self.support, formula=self.__call__)
+        kwargs = {**defaults, **kwargs}
+        return Func(**kwargs)
+
 
 class Triangle(Func):
     DEFAULT_NAME = 'triangle'

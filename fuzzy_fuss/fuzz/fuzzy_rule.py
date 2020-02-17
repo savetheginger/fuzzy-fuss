@@ -97,10 +97,10 @@ class Rule(object):
         weight = self.compute_weight(variables, measurements)
         return weight, self.get_conclusion(variables, weight)
 
-    def get_conclusion(self, variables, weight=None):
+    def get_conclusion(self, variables, weight=None, method='max-min'):
         conc = variables[self.conclusion[0]][self.conclusion[1]]
         if weight is not None:
-            conc = conc * weight
+            conc = conc.cut(weight, method=method)
 
         return conc
 
@@ -125,47 +125,48 @@ class RuleSet(dict):
         self._check_rule_type(rule)
         self[rule.name] = rule
 
-    def get_partial_conclusions(self, variables, weights=None):
+    def get_partial_conclusions(self, variables, weights=None, **kwargs):
         weights = weights or defaultdict(lambda: None)
-        conclusions = [rule.get_conclusion(variables, weights[rule.name]) for rule in self]
+        conclusions = [rule.get_conclusion(variables, weights[rule.name], **kwargs) for rule in self]
         return conclusions
 
-    def sum(self, variables, weights):
-        conclusions = self.get_partial_conclusions(variables, weights)
+    def sum(self, variables, weights, **kwargs):
+        conclusions = self.get_partial_conclusions(variables, weights, **kwargs)
 
-        conc_sum = conclusions[0]
-        for conc in conclusions:
-            conc_sum += conc
+        return self.add_conclusions(conclusions)
 
-        return conc_sum
+    @staticmethod
+    def add_conclusions(conclusions):
+        return sum(conclusions)
 
     def compute_weights(self, variables, measurements):
         return {rule.name: rule.compute_weight(variables, measurements) for rule in self}
 
-    def evaluate(self, variables: dict, measurements: dict):
+    def evaluate(self, variables: dict, measurements: dict, **kwargs):
         # TODO: this assumes the conclusion of each rule is the same variable type
         weights = self.compute_weights(variables, measurements)
 
-        compound_conclusion = self.sum(variables, weights)
+        compound_conclusion = self.sum(variables, weights, **kwargs)
 
         return compound_conclusion
 
-    def plot_eval(self, variables: dict, measurements: dict):
+    def plot_eval(self, variables: dict, measurements: dict, **kwargs):
         weights = self.compute_weights(variables, measurements)
         conclusions = self.get_partial_conclusions(variables)
-        conclusions_cut = self.get_partial_conclusions(variables, weights)
+        conclusions_cut = self.get_partial_conclusions(variables, weights, **kwargs)
 
         rules = list(self)
 
         fig, axes = plt.subplots(1, len(self)+1, figsize=(15, 4), sharey='all', sharex='all')
         for i, conc in enumerate(conclusions):
-            conc.plot_cut(ax=axes[i], cut=weights[rules[i].name], title=f"{rules[i].name} {rules[i].conclusion}")
+            conc.plot_cut(ax=axes[i], cut=weights[rules[i].name], title=f"{rules[i].name} {rules[i].conclusion}",
+                          **kwargs)
             axes[i].grid(color='lightgray')
 
         for i, conc in enumerate(conclusions_cut):
             conc.plot(ax=axes[-1], label=rules[i].name, linewidth=1, linestyle='--')
-        self.sum(variables, weights).plot(ax=axes[-1], shade=0, color='k',
-                                          title="Aggregate conclusion", label="Aggregate")
+        self.add_conclusions(conclusions_cut).plot(ax=axes[-1], shade=0, color='k',
+                                                   title="Aggregate conclusion", label="Aggregate")
         axes[-1].grid(color='lightgray')
 
         axes[-1].legend(fancybox=True, framealpha=0.5)

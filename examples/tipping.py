@@ -17,5 +17,7 @@ ruleset = RuleSet()
 for rule in rb.rules.values():
     ruleset.add_rule(rule)
 
-ruleset.plot_eval(rb.variables, rb.measurements)
+ruleset.plot_eval(rb.variables, rb.measurements, method='max-min')
+ruleset.plot_eval(rb.variables, rb.measurements, method='max-product')
+
 

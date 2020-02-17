@@ -29,12 +29,12 @@ class FuzzySet(object):
             data = np.array(data)
         return self.membership_function(data)
 
-    def plot_cut(self, cut, ax=None, show=False, **kwargs):
+    def plot_cut(self, cut, ax=None, show=False, method='max-min', **kwargs):
         if ax is None:
             fig, ax = plt.subplots()
 
         self.plot(ax=ax, **kwargs)
-        (self * cut).plot(ax=ax, **kwargs)
+        self.cut(cut, method).plot(ax=ax, **kwargs)
         ax.axhline(cut, lw=1, color='k', linestyle=':', label=f"{cut:.2f}")
         ax.legend(fancybox=True, framealpha=0.5)
 
@@ -84,9 +84,16 @@ class FuzzySet(object):
         comp.invert()
         return comp
 
+    def __radd__(self, other):
+        if other == 0:
+            return self
+
+        return self.__add__(other)
+
     def __add__(self, other):
         if isinstance(other, FuzzySet):
             return FuzzySet(self.membership_function + other.membership_function)
+
         else:
             raise TypeError(f"item not an instance of FuzzySet (got {type(other)})")
 
@@ -120,7 +127,7 @@ class FuzzySet(object):
     def _min(self, cut: float):
         """For max-min composition: perform an alpha-cut on the function"""
 
-        return lambda x: np.minimum(self.membership_function(x), cut)
+        return self._mf.make(formula=(lambda x: np.minimum(self.membership_function(x), cut)))
 
     def _product(self, cut):
         """For max-product composition: multiply the function by the max level"""
