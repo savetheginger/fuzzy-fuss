@@ -133,10 +133,6 @@ class RuleSet(dict):
     def sum(self, variables, weights, **kwargs):
         conclusions = self.get_partial_conclusions(variables, weights, **kwargs)
 
-        return self.add_conclusions(conclusions)
-
-    @staticmethod
-    def add_conclusions(conclusions):
         return sum(conclusions)
 
     def compute_weights(self, variables, measurements):
@@ -165,8 +161,8 @@ class RuleSet(dict):
 
         for i, conc in enumerate(conclusions_cut):
             conc.plot(ax=axes[-1], label=rules[i].name, linewidth=1, linestyle='--')
-        self.add_conclusions(conclusions_cut).plot(ax=axes[-1], shade=0, color='k',
-                                                   title="Aggregate conclusion", label="Aggregate")
+        sum(conclusions_cut).plot(ax=axes[-1], shade=0, color='k',
+                                  title="Aggregate conclusion", label="Aggregate")
         axes[-1].grid(color='lightgray')
 
         axes[-1].legend(fancybox=True, framealpha=0.5)
