@@ -115,3 +115,11 @@ class FuzzySet(object):
 
         return FuzzySet(func)
 
+    def defuzzify(self, grid_size=1):
+        # defuzzify using the centroid of area method
+
+        xdata = np.arange(*self.membership_function.support, grid_size)
+        ydata = self.membership_function(xdata)
+
+        return np.average(xdata, weights=ydata)
+

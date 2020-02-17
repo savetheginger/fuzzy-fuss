@@ -44,13 +44,13 @@ class RuleBase(dict):
     def compute_weights(self, measurements):
         return {rule.name: rule.compute_weight(self.variables, measurements) for rule in self}
 
-    def evaluate(self, measurements: dict, **kwargs):
+    def evaluate(self, measurements: dict, grid_size=1, **kwargs):
         # TODO: this assumes the conclusion of each rule is the same variable type
         weights = self.compute_weights(measurements)
 
         compound_conclusion = self.sum(weights, **kwargs)
 
-        return compound_conclusion
+        return compound_conclusion.defuzzify(grid_size=grid_size)
 
     @plotting.refine_multiplot
     def plot_eval(self, weights: dict, title=None, method='max-min', **kwargs):
@@ -65,8 +65,11 @@ class RuleBase(dict):
 
         for i, conc in enumerate(conclusions_cut):
             conc.plot(ax=axes[-1], label=rules[i].name, linewidth=1, linestyle='--')
-        sum(conclusions_cut).plot(ax=axes[-1], shade=0, color='k',
-                                  title="Aggregate conclusion", label="Aggregate")
+
+        compound_conc = sum(conclusions_cut)
+        compound_conc.plot(ax=axes[-1], shade=0, color='k', title="Aggregate conclusion", label="Aggregate")
+
+        axes[-1].axvline(compound_conc.defuzzify(), color='k', linestyle='-.', lw=1, label="Crisp val.")
 
         axes[-1].legend()
 
