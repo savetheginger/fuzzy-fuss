@@ -69,6 +69,14 @@ class Func(object):
         kwargs = {**defaults, **kwargs}
         return Func(**kwargs)
 
+    def cut(self, level):
+        if not isinstance(level, float):
+            raise TypeError(f"Cut level should be a float (got {type(level)})")
+
+        return Func(formula=(lambda x: np.minimum(self(x), level)),
+                    support=self.support,
+                    name=f"{self.name} cut at {level}")
+
 
 class Triangle(Func):
     DEFAULT_NAME = 'triangle'

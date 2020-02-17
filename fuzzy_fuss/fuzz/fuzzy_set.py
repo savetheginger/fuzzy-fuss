@@ -116,21 +116,11 @@ class FuzzySet(object):
             raise ValueError(f"Cut level must be between 0 and 1 (got {cut})")
 
         if method == 'max-min':
-            func = self._min(cut)
+            func = self._mf.cut(cut)
         elif method == 'max-product':
-            func = self._product(cut)
+            func = self.membership_function * cut
         else:
             raise ValueError(f"Unknown cut method: {method}")
 
         return FuzzySet(func)
-
-    def _min(self, cut: float):
-        """For max-min composition: perform an alpha-cut on the function"""
-
-        return self._mf.make(formula=(lambda x: np.minimum(self.membership_function(x), cut)))
-
-    def _product(self, cut):
-        """For max-product composition: multiply the function by the max level"""
-
-        return self.membership_function * cut
 
