@@ -115,11 +115,24 @@ class FuzzySet(object):
 
         return FuzzySet(func)
 
-    def defuzzify(self, grid_size=1):
-        # defuzzify using the centroid of area method
+    def defuzzify(self, grid_size=1, method='coa'):
 
-        xdata = np.arange(*self.membership_function.support, grid_size)
-        ydata = self.membership_function(xdata)
+        xdata, ydata = self.generate_data(grid_size)
+
+        method = method.lower()
+
+        if method == 'coa':
+            return self._defuzzify_coa(xdata, ydata)
+        else:
+            raise ValueError(f"Unknown defuzzification method code: {method}")
+
+    @staticmethod
+    def _defuzzify_coa(xdata, ydata):
+        """Calculate centroid of area"""
 
         return np.average(xdata, weights=ydata)
 
+    def generate_data(self, grid_size):
+        xdata = np.arange(*self.membership_function.support, grid_size)
+        ydata = self.membership_function(xdata)
+        return xdata, ydata
