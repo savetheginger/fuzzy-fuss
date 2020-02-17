@@ -60,15 +60,13 @@ class RuleBase(dict):
         for i, conc in enumerate(self.conclusions):
             conc.plot_cut(ax=axes[i], cut_level=weights[rules[i].name], method=method,
                           title=f"{rules[i].name} {rules[i].conclusion}", **kwargs)
-            axes[i].grid(color='lightgray')
 
         for i, conc in enumerate(conclusions_cut):
             conc.plot(ax=axes[-1], label=rules[i].name, linewidth=1, linestyle='--')
         sum(conclusions_cut).plot(ax=axes[-1], shade=0, color='k',
                                   title="Aggregate conclusion", label="Aggregate")
-        axes[-1].grid(color='lightgray')
 
-        axes[-1].legend(fancybox=True, framealpha=0.5)
+        axes[-1].legend()
 
         fig.subplots_adjust(left=0.05, right=0.95, top=0.85)
         fig.suptitle(title or f"Aggregation of rules with {method} method")

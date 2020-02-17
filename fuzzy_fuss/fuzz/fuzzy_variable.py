@@ -37,7 +37,6 @@ class FuzzyVariable(dict):
         for name in names:
             self[name].plot(data, ax=ax, label=name, **{**kwargs, **kwargs_by_name[name]})
 
-        ax.grid(color='lightgray')
         ax.axhline(0, color='darkgray', zorder=1, lw=3)
         ax.axhline(1, color='dimgray', zorder=1, lw=1)
 

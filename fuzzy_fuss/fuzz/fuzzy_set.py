@@ -3,7 +3,11 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from collections import abc
 
+from fuzzy_fuss.misc import plotting
 from fuzzy_fuss.fuzz.func import Func
+
+
+plotting.setup()
 
 
 class FuzzySet(object):
@@ -36,7 +40,7 @@ class FuzzySet(object):
         self.plot(ax=ax, **kwargs)
         self.cut(cut_level, method).plot(ax=ax, **kwargs)
         ax.axhline(cut_level, lw=1, color='k', linestyle=':', label=f"{cut_level:.2f}")
-        ax.legend(fancybox=True, framealpha=0.5)
+        ax.legend()
 
         if show:
             plt.show()
@@ -59,7 +63,7 @@ class FuzzySet(object):
             ax.axvline(marker, lw=1, color='k', linestyle='-.', label="Meas.")
             ax.axhline(marker_val, lw=1, color='k', linestyle=':')
             ax.plot(marker, marker_val, '*', color='crimson', markersize=10)
-            ax.legend(fancybox=True, framealpha=0.5)
+            ax.legend()
 
         if title:
             ax.set_title(title)
