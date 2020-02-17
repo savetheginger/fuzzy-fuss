@@ -5,17 +5,24 @@ from fuzzy_fuss.fuzz.fuzzy_variable import FuzzyVariable
 from fuzzy_fuss.fuzz.func import Trapezoid
 
 
-class Fuzzy4Tuple(FuzzySet, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])):
+Base4Tuple = namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'])
+
+
+class Fuzzy4Tuple(FuzzySet, Base4Tuple):
     def __init__(self, *args, **kwargs):
-        super(Fuzzy4Tuple, self).__init__()
+        super(Fuzzy4Tuple, self).__init__(**kwargs)
 
         self._mf = Trapezoid(self.a - self.alpha,
                              self.a,
                              self.b,
                              self.b + self.beta)
 
-    def __new__(cls, *args, name=None, **kwargs):
-        return super().__new__(cls, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        tuple_params = ['a', 'b', 'alpha', 'beta']
+        for i, param in enumerate(tuple_params):
+            if len(args) < i + 1:
+                args += kwargs.pop(param, None)
+        return super().__new__(cls, *args)
 
     @staticmethod
     def from_points(v1, v2, v3, v4):
