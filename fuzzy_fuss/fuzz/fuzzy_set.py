@@ -4,6 +4,7 @@ from collections import abc
 
 from fuzzy_fuss.misc import plotting
 from fuzzy_fuss.fuzz.func import Func
+from fuzzy_fuss.fuzz.defuzzifier import Defuzzifier
 
 
 class FuzzySet(object):
@@ -115,44 +116,5 @@ class FuzzySet(object):
 
         return FuzzySet(func)
 
-    def defuzzify(self, grid_size=1, method='coa'):
-
-        method = method.lower()
-
-        if method in ['coa', 'som', 'lom', 'mom']:
-            return getattr(self, f'_defuzzify_{method}')(*self.generate_data(grid_size))
-        else:
-            raise ValueError(f"Unknown defuzzification method code: {method}")
-
-    @staticmethod
-    def _defuzzify_coa(xdata, ydata):
-        """Calculate centroid of area"""
-
-        return np.average(xdata, weights=ydata)
-
-    @staticmethod
-    def _defuzzify_som(xdata, ydata):
-        """Smallest of maximum"""
-
-        return FuzzySet._get_max_range(xdata, ydata).min()
-
-    @staticmethod
-    def _defuzzify_lom(xdata, ydata):
-        """Largest of maximum"""
-
-        return FuzzySet._get_max_range(xdata, ydata).max()
-
-    @staticmethod
-    def _defuzzify_mom(xdata, ydata):
-        """Largest of maximum"""
-
-        return FuzzySet._get_max_range(xdata, ydata).mean()
-
-    def generate_data(self, grid_size):
-        xdata = np.arange(*self.membership_function.support, grid_size)
-        ydata = self.membership_function(xdata)
-        return xdata, ydata
-
-    @staticmethod
-    def _get_max_range(xdata, ydata):
-        return xdata[np.where(ydata == ydata.max())]
+    def defuzzify(self, **kwargs):
+        return Defuzzifier.defuzzify(self.membership_function, **kwargs)
