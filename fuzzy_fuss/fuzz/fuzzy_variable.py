@@ -27,7 +27,7 @@ class FuzzyVariable(dict):
         s_high = max(v.support[1] for v in self.values()) + margin
         return s_low, s_high
 
-    @plotting.refine(show_default=True)
+    @plotting.refine_plot(show_default=True)
     def plot(self, data, names=None, title=None, kwargs_by_name: dict = None, **kwargs,):
         if names is None:
             names = self.keys()

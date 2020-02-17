@@ -52,7 +52,7 @@ class RuleBase(dict):
 
         return compound_conclusion
 
-    @plotting.refine(show_default=True)
+    @plotting.refine_multiplot
     def plot_eval(self, weights: dict, title=None, method='max-min', **kwargs):
         conclusions_cut = self.get_partial_conclusions(weights, method=method)
 

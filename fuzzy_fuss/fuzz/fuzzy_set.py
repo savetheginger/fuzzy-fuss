@@ -30,7 +30,7 @@ class FuzzySet(object):
             data = np.array(data)
         return self.membership_function(data)
 
-    @plotting.refine(show_default=False)
+    @plotting.refine_plot()
     def plot_cut(self, cut_level, ax=None, method='max-min', **kwargs):
         if ax is None:
             fig, ax = plt.subplots()
@@ -40,7 +40,7 @@ class FuzzySet(object):
         ax.axhline(cut_level, lw=1, color='k', linestyle=':', label=f"{cut_level:.2f}")
         ax.legend()
 
-    @plotting.refine(show_default=False)
+    @plotting.refine_plot()
     def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, **kwargs):
         if data is None:
             data = np.arange(*self.get_support(margin=margin))

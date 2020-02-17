@@ -10,7 +10,7 @@ def setup():
 setup()
 
 
-def refine(show_default=False):
+def refine_plot(show_default=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
             show = kwargs.pop('show', show_default)
@@ -21,5 +21,17 @@ def refine(show_default=False):
                 plt.show()
 
         return wrapper
+
     return decorator
+
+
+def refine_multiplot(func):
+    def wrapper(*args, show=True, **kwargs):
+        func(*args, **kwargs)
+
+        if show:
+            plt.show()
+
+    return wrapper
+
 

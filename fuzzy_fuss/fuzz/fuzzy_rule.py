@@ -48,7 +48,7 @@ class Rule(object):
 
         return f"{self.name}: {prop} => {str(self.conclusion)}"
 
-    @plotting.refine(show_default=True)
+    @plotting.refine_multiplot
     def plot(self, variables, measurements=None, axes=None, fig=None, title=None, **kwargs):
         if axes is None:
             fig, axes = plt.subplots(1, len(self.prop_atoms)+1, sharey='all', figsize=(8, 4))
