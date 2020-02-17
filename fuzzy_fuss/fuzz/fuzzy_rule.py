@@ -132,6 +132,10 @@ class RuleSet(dict):
         conclusions = [rule.get_conclusion(self.variables, weights[rule.name], **kwargs) for rule in self]
         return conclusions
 
+    @property
+    def conclusions(self):
+        return self.get_partial_conclusions()
+
     def sum(self, weights, **kwargs):
         conclusions = self.get_partial_conclusions(weights, **kwargs)
 
@@ -148,17 +152,15 @@ class RuleSet(dict):
 
         return compound_conclusion
 
-    def plot_eval(self, measurements: dict, **kwargs):
-        weights = self.compute_weights(measurements)
-        conclusions = self.get_partial_conclusions()
-        conclusions_cut = self.get_partial_conclusions(weights, **kwargs)
+    def plot_eval(self, weights: dict, title=None, method='max-min', **kwargs):
+        conclusions_cut = self.get_partial_conclusions(weights, method=method)
 
         rules = list(self)
 
         fig, axes = plt.subplots(1, len(self)+1, figsize=(15, 4), sharey='all', sharex='all')
-        for i, conc in enumerate(conclusions):
-            conc.plot_cut(ax=axes[i], cut=weights[rules[i].name], title=f"{rules[i].name} {rules[i].conclusion}",
-                          **kwargs)
+        for i, conc in enumerate(self.conclusions):
+            conc.plot_cut(ax=axes[i], cut_level=weights[rules[i].name], method=method,
+                          title=f"{rules[i].name} {rules[i].conclusion}", **kwargs)
             axes[i].grid(color='lightgray')
 
         for i, conc in enumerate(conclusions_cut):
@@ -169,5 +171,6 @@ class RuleSet(dict):
 
         axes[-1].legend(fancybox=True, framealpha=0.5)
 
-        fig.subplots_adjust(left=0.05, right=0.95)
+        fig.subplots_adjust(left=0.05, right=0.95, top=0.85)
+        fig.suptitle(title or f"Aggregation of rules with {method} method")
         plt.show()

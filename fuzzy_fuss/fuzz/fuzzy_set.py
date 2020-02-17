@@ -29,13 +29,13 @@ class FuzzySet(object):
             data = np.array(data)
         return self.membership_function(data)
 
-    def plot_cut(self, cut, ax=None, show=False, method='max-min', **kwargs):
+    def plot_cut(self, cut_level, ax=None, show=False, method='max-min', **kwargs):
         if ax is None:
             fig, ax = plt.subplots()
 
         self.plot(ax=ax, **kwargs)
-        self.cut(cut, method).plot(ax=ax, **kwargs)
-        ax.axhline(cut, lw=1, color='k', linestyle=':', label=f"{cut:.2f}")
+        self.cut(cut_level, method).plot(ax=ax, **kwargs)
+        ax.axhline(cut_level, lw=1, color='k', linestyle=':', label=f"{cut_level:.2f}")
         ax.legend(fancybox=True, framealpha=0.5)
 
         if show:
