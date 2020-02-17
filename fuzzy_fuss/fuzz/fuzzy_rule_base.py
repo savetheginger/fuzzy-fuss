@@ -6,7 +6,8 @@ from fuzzy_fuss.fuzz.fuzzy_rule import Rule
 
 
 class RuleBase(dict):
-    def __init__(self, variables):
+    def __init__(self, name, variables):
+        self.name = name
         self.variables = variables
         super(RuleBase, self).__init__()
 
@@ -17,6 +18,10 @@ class RuleBase(dict):
     def __iter__(self):
         for key in sorted(self.keys()):  # sort by rule name
             yield self[key]
+
+    def __repr__(self):
+        v = self.variables
+        return f"Rule base '{self.name}' with {len(v)} variables ({', '.join(v.keys())}) and {len(self)} rules"
 
     @staticmethod
     def _check_rule_type(value):
@@ -51,6 +56,10 @@ class RuleBase(dict):
         compound_conclusion = self.sum(weights, **kwargs)
 
         return compound_conclusion.defuzzify(grid_size=grid_size)
+
+    def plot_rules(self, **kwargs):
+        for fr in self:
+            fr.plot(self.variables, **kwargs)
 
     @plotting.refine_multiplot
     def plot_eval(self, weights: dict, title=None, method='max-min', **kwargs):

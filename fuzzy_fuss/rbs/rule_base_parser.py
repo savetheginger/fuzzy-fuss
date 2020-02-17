@@ -1,3 +1,5 @@
+from fuzzy_fuss.fuzz.fuzzy_rule_base import RuleBase
+
 from fuzzy_fuss.rbs.parsed_rule import ParsedRule, ParsedMeasurement
 from fuzzy_fuss.rbs.parsed_object import ParsedObjDict
 from fuzzy_fuss.rbs.variable import ParsedVariable
@@ -10,10 +12,6 @@ class RuleBaseParser(object):
         self.measurements = ParsedObjDict(ParsedMeasurement, float)
         self.name = None
         self._current_name = None
-
-    def __repr__(self):
-        v = self.variables
-        return f"Rule base '{self.name}' with {len(v)} variables ({', '.join(v.keys())}) and {len(self.rules)} rules"
 
     def parse(self, filename):
         self.name = None
@@ -40,3 +38,14 @@ class RuleBaseParser(object):
         self.variables.pop(None)
 
         self._current_name = None
+
+        return self.make_rule_base(), self.measurements
+
+    def make_rule_base(self):
+        rulebase = RuleBase(self.name, self.variables)
+        for rule in self.rules.values():
+            rulebase.add_rule(rule)
+
+        return rulebase
+
+
