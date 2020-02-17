@@ -21,7 +21,7 @@ class Fuzzy4Tuple(FuzzySet, Base4Tuple):
         tuple_params = ['a', 'b', 'alpha', 'beta']
         for i, param in enumerate(tuple_params):
             if len(args) < i + 1:
-                args += kwargs.pop(param, None)
+                args += kwargs.pop(param, None),  # final comma: adding a 1-tuple
         return super().__new__(cls, *args)
 
     @staticmethod
