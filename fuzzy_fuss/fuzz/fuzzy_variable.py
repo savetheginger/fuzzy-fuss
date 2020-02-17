@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 from collections import defaultdict
 
@@ -28,23 +27,17 @@ class FuzzyVariable(dict):
         return s_low, s_high
 
     @plotting.refine_plot(show_default=True)
-    def plot(self, data, names=None, title=None, kwargs_by_name: dict = None, **kwargs,):
+    def plot(self, data, ax, names=None, title=None, kwargs_by_name: dict = None, **kwargs,):
         if names is None:
             names = self.keys()
 
         kwargs_by_name = defaultdict(lambda: {}, **(kwargs_by_name or {}))
 
-        fig, ax = plt.subplots()
-
         for name in names:
-            self[name].plot(data, ax=ax, label=name, **{**kwargs, **kwargs_by_name[name]})
-
-        ax.axhline(0, color='darkgray', zorder=1, lw=3)
-        ax.axhline(1, color='dimgray', zorder=1, lw=1)
+            self[name].plot(ax=ax, data=data, label=name, **{**kwargs, **kwargs_by_name[name]})
 
         ax.set_title(title or f"Fuzzy variable '{self.name}'")
 
-        ax.set_xlabel("x values")
         ax.set_ylabel("membership values")
 
         ax.legend()

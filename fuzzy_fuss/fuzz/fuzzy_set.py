@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from copy import deepcopy
 from collections import abc
 
@@ -8,8 +7,9 @@ from fuzzy_fuss.fuzz.func import Func
 
 
 class FuzzySet(object):
-    def __init__(self, func: Func = None):
+    def __init__(self, func: Func = None, name=None):
         self._mf = func
+        self.name = name
 
     @property
     def membership_function(self):
@@ -31,24 +31,18 @@ class FuzzySet(object):
         return self.membership_function(data)
 
     @plotting.refine_plot()
-    def plot_cut(self, cut_level, ax=None, method='max-min', **kwargs):
-        if ax is None:
-            fig, ax = plt.subplots()
-
+    def plot_cut(self, cut_level, ax, method='max-min', **kwargs):
         self.plot(ax=ax, **kwargs)
         self.cut(cut_level, method).plot(ax=ax, **kwargs)
         ax.axhline(cut_level, lw=1, color='k', linestyle=':', label=f"{cut_level:.2f}")
         ax.legend()
 
     @plotting.refine_plot()
-    def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, **kwargs):
+    def plot(self, ax, data=None, shade=0.2, margin=0, title=None, marker=None, **kwargs):
         if data is None:
             data = np.arange(*self.get_support(margin=margin))
 
         values = self.get_values(data)
-
-        if ax is None:
-            fig, ax = plt.subplots()
 
         border, = ax.plot(data, values, **kwargs)
         if shade:

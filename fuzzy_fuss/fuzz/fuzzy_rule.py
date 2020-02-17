@@ -65,10 +65,6 @@ class Rule(object):
         else:
             conc.plot(ax=axes[-1], **kwargs)
 
-        for ax in axes:
-            ax.axhline(0, color='darkgray', zorder=1, lw=3)
-            ax.axhline(1, color='dimgray', zorder=1, lw=1)
-            ax.set_xlabel("x values")
         axes[0].set_ylabel("membership values")
 
         fig.suptitle(title or str(self))
