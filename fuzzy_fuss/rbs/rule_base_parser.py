@@ -3,7 +3,7 @@ from fuzzy_fuss.rbs.parsed_object import ParsedObjDict
 from fuzzy_fuss.rbs.variable import ParsedVariable
 
 
-class RuleBase(object):
+class RuleBaseParser(object):
     def __init__(self):
         self.rules = ParsedObjDict(ParsedRule)
         self.variables = {}
