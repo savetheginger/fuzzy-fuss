@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from collections import defaultdict
-
 from typing import Tuple
+
+from fuzzy_fuss.misc import plotting
 
 
 class Atom(tuple):
@@ -47,6 +48,7 @@ class Rule(object):
 
         return f"{self.name}: {prop} => {str(self.conclusion)}"
 
+    @plotting.refine(show_default=True)
     def plot(self, variables, measurements=None, axes=None, fig=None, title=None, **kwargs):
         if axes is None:
             fig, axes = plt.subplots(1, len(self.prop_atoms)+1, sharey='all', figsize=(8, 4))
@@ -71,8 +73,6 @@ class Rule(object):
 
         fig.suptitle(title or str(self))
         fig.subplots_adjust(top=0.8)
-
-        plt.show()
 
     def compute_weight(self, variables: dict, measurements: dict):
         conn = set(self.prop_connectives)

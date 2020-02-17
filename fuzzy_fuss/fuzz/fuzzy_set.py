@@ -7,9 +7,6 @@ from fuzzy_fuss.misc import plotting
 from fuzzy_fuss.fuzz.func import Func
 
 
-plotting.setup()
-
-
 class FuzzySet(object):
     def __init__(self, func: Func = None):
         self._mf = func
@@ -33,7 +30,8 @@ class FuzzySet(object):
             data = np.array(data)
         return self.membership_function(data)
 
-    def plot_cut(self, cut_level, ax=None, show=False, method='max-min', **kwargs):
+    @plotting.refine(show_default=False)
+    def plot_cut(self, cut_level, ax=None, method='max-min', **kwargs):
         if ax is None:
             fig, ax = plt.subplots()
 
@@ -42,10 +40,8 @@ class FuzzySet(object):
         ax.axhline(cut_level, lw=1, color='k', linestyle=':', label=f"{cut_level:.2f}")
         ax.legend()
 
-        if show:
-            plt.show()
-
-    def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, show=False, **kwargs):
+    @plotting.refine(show_default=False)
+    def plot(self, data=None, ax=None, shade=0.2, margin=0, title=None, marker=None, **kwargs):
         if data is None:
             data = np.arange(*self.get_support(margin=margin))
 
@@ -67,9 +63,6 @@ class FuzzySet(object):
 
         if title:
             ax.set_title(title)
-
-        if show:
-            plt.show()
 
     def issubset(self, other, val_range=None, data=None):
         if data is None and val_range is None:

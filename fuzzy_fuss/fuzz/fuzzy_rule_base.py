@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
+from fuzzy_fuss.misc import plotting
 from fuzzy_fuss.fuzz.fuzzy_rule import Rule
 
 
@@ -51,6 +52,7 @@ class RuleBase(dict):
 
         return compound_conclusion
 
+    @plotting.refine(show_default=True)
     def plot_eval(self, weights: dict, title=None, method='max-min', **kwargs):
         conclusions_cut = self.get_partial_conclusions(weights, method=method)
 

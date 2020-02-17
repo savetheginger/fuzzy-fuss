@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from collections import defaultdict
 
+from fuzzy_fuss.misc import plotting
 from fuzzy_fuss.fuzz.fuzzy_set import FuzzySet
 
 
@@ -26,6 +27,7 @@ class FuzzyVariable(dict):
         s_high = max(v.support[1] for v in self.values()) + margin
         return s_low, s_high
 
+    @plotting.refine(show_default=True)
     def plot(self, data, names=None, title=None, kwargs_by_name: dict = None, **kwargs,):
         if names is None:
             names = self.keys()
@@ -45,9 +47,7 @@ class FuzzyVariable(dict):
         ax.set_xlabel("x values")
         ax.set_ylabel("membership values")
 
-        ax.legend(fancybox=True, framealpha=0.5)
-
-        plt.show()
+        ax.legend()
 
     def plot_range(self, *args, margin=10, **kwargs):
         args = args or self.get_support(margin=margin)
