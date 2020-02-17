@@ -22,7 +22,7 @@ class ParsedTuple(ParsedObj, Fuzzy4Tuple):
         except ValueError:
             raise ValueError(f"Invalid format for numerical values encountered in '{nums}'")
 
-        return value, cls(*num_nums)
+        return value, cls(*num_nums, name=value)
 
 
 class ParsedVariable(ParsedObjDict, FuzzyVariable):

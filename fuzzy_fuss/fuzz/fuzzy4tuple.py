@@ -14,6 +14,9 @@ class Fuzzy4Tuple(FuzzySet, namedtuple('fuzzy4tuple', ['a', 'b', 'alpha', 'beta'
                              self.b,
                              self.b + self.beta)
 
+    def __new__(cls, *args, name=None, **kwargs):
+        return super().__new__(cls, *args, **kwargs)
+
     @staticmethod
     def from_points(v1, v2, v3, v4):
         if not v1 <= v2 <= v3 <= v4:
