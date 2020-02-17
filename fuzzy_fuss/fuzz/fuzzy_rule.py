@@ -106,7 +106,8 @@ class Rule(object):
 
 
 class RuleSet(dict):
-    def __init__(self):
+    def __init__(self, variables):
+        self.variables = variables
         super(RuleSet, self).__init__()
 
     def __setitem__(self, key, value):
@@ -126,31 +127,31 @@ class RuleSet(dict):
         self._check_rule_type(rule)
         self[rule.name] = rule
 
-    def get_partial_conclusions(self, variables, weights=None, **kwargs):
+    def get_partial_conclusions(self, weights=None, **kwargs):
         weights = weights or defaultdict(lambda: None)
-        conclusions = [rule.get_conclusion(variables, weights[rule.name], **kwargs) for rule in self]
+        conclusions = [rule.get_conclusion(self.variables, weights[rule.name], **kwargs) for rule in self]
         return conclusions
 
-    def sum(self, variables, weights, **kwargs):
-        conclusions = self.get_partial_conclusions(variables, weights, **kwargs)
+    def sum(self, weights, **kwargs):
+        conclusions = self.get_partial_conclusions(weights, **kwargs)
 
         return sum(conclusions)
 
-    def compute_weights(self, variables, measurements):
-        return {rule.name: rule.compute_weight(variables, measurements) for rule in self}
+    def compute_weights(self, measurements):
+        return {rule.name: rule.compute_weight(self.variables, measurements) for rule in self}
 
-    def evaluate(self, variables: dict, measurements: dict, **kwargs):
+    def evaluate(self, measurements: dict, **kwargs):
         # TODO: this assumes the conclusion of each rule is the same variable type
-        weights = self.compute_weights(variables, measurements)
+        weights = self.compute_weights(measurements)
 
-        compound_conclusion = self.sum(variables, weights, **kwargs)
+        compound_conclusion = self.sum(weights, **kwargs)
 
         return compound_conclusion
 
-    def plot_eval(self, variables: dict, measurements: dict, **kwargs):
-        weights = self.compute_weights(variables, measurements)
-        conclusions = self.get_partial_conclusions(variables)
-        conclusions_cut = self.get_partial_conclusions(variables, weights, **kwargs)
+    def plot_eval(self, measurements: dict, **kwargs):
+        weights = self.compute_weights(measurements)
+        conclusions = self.get_partial_conclusions()
+        conclusions_cut = self.get_partial_conclusions(weights, **kwargs)
 
         rules = list(self)
 
