@@ -69,7 +69,7 @@ class RuleBase(dict):
         compound_conc = sum(conclusions_cut)
         compound_conc.plot(ax=axes[-1], shade=0, color='k', title="Aggregate conclusion", label="Aggregate")
 
-        axes[-1].axvline(compound_conc.defuzzify(), color='k', linestyle='-.', lw=1, label="Crisp val.")
+        axes[-1].axvline(compound_conc.defuzzify(method='coa'), color='k', linestyle='-.', lw=1, label="Crisp val.")
 
         axes[-1].legend()
 
