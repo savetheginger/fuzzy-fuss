@@ -27,7 +27,9 @@ def refine_plot(show_default=False):
             # setup axis
             ax.axhline(0, color='darkgray', zorder=1, lw=3)
             ax.axhline(1, color='dimgray', zorder=1, lw=1)
-            ax.set_xlabel(getattr(args[0], 'name', None) or 'x values')
+            ax.set_xlabel(getattr(args[0], 'variable_name', None)
+                          or (getattr(args[0], 'variable_name', None))
+                          or 'x values')
 
             func(*args, ax=ax, **kwargs)
 

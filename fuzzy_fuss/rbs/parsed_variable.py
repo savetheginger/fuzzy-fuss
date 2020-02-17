@@ -22,9 +22,13 @@ class ParsedTuple(ParsedObj, Fuzzy4Tuple):
         except ValueError:
             raise ValueError(f"Invalid format for numerical values encountered in '{nums}'")
 
-        return value, cls(*num_nums, name=value)
+        return value, cls(*num_nums, value_name=value)
 
 
 class ParsedVariable(ParsedObjDict, FuzzyVariable):
     def __init__(self, name, **kwargs):
         super(ParsedVariable, self).__init__(name=name, object_type=ParsedTuple, **kwargs)
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, value)
+        self[key].variable_name = self.name

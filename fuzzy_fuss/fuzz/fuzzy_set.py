@@ -8,9 +8,10 @@ from fuzzy_fuss.fuzz.defuzzifier import Defuzzifier
 
 
 class FuzzySet(object):
-    def __init__(self, func: Func = None, name=None):
+    def __init__(self, func: Func = None, variable_name=None, value_name=None):
         self._mf = func
-        self.name = name
+        self.variable_name = variable_name
+        self.value_name = value_name
 
     @property
     def membership_function(self):

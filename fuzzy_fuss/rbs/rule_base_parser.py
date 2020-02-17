@@ -2,7 +2,7 @@ from fuzzy_fuss.fuzz.fuzzy_rule_base import RuleBase
 
 from fuzzy_fuss.rbs.parsed_rule import ParsedRule, ParsedMeasurement
 from fuzzy_fuss.rbs.parsed_object import ParsedObjDict
-from fuzzy_fuss.rbs.variable import ParsedVariable
+from fuzzy_fuss.rbs.parsed_variable import ParsedVariable
 
 
 class RuleBaseParser(object):
