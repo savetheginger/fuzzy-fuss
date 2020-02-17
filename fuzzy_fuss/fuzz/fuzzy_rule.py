@@ -114,7 +114,8 @@ class RuleSet(dict):
         super(RuleSet, self).__setitem__(key, value)
 
     def __iter__(self):
-        yield from set(self.values())
+        for key in sorted(self.keys()):  # sort by rule name
+            yield self[key]
 
     @staticmethod
     def _check_rule_type(value):
