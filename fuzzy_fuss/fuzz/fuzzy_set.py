@@ -135,7 +135,7 @@ class FuzzySet(object):
         else:
             raise ValueError(f"Unknown cut method: {method}")
 
-        return FuzzySet(func)
+        return self._make(func=func, value_name=f"{self.value_name} cut at {cut}")
 
     def defuzzify(self, **kwargs):
         return Defuzzifier.defuzzify(self.membership_function, **kwargs)

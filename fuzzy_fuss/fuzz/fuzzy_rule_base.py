@@ -76,7 +76,8 @@ class RuleBase(dict):
             conc.plot(ax=axes[-1], label=rules[i].name, linewidth=1, linestyle='--')
 
         compound_conc = sum(conclusions_cut)
-        compound_conc.plot(ax=axes[-1], shade=0, color='k', title="Aggregate conclusion", label="Aggregate")
+        compound_conc.plot(ax=axes[-1], shade=0, color='k', label="Aggregate",
+                           title=f"{compound_conc.variable_name}: composition")
 
         axes[-1].axvline(compound_conc.defuzzify(method='coa'), color='k', linestyle='-.', lw=1, label="Crisp val.")
 
