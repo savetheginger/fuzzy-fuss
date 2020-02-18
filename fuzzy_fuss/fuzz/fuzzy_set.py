@@ -79,6 +79,7 @@ class FuzzySet(object):
     def complement(self):
         comp = deepcopy(self)
         comp.invert()
+        comp.value_name = f"NOT ({self.value_name})"
         return comp
 
     def __radd__(self, other):
@@ -94,7 +95,8 @@ class FuzzySet(object):
     def __add__(self, other):
         if isinstance(other, FuzzySet):
             self._var_check(other)
-            return self._make(func=self.membership_function + other.membership_function)
+            return self._make(func=self.membership_function + other.membership_function,
+                              value_name=f"({self.value_name}) OR ({other.value_name})")
 
         else:
             raise TypeError(f"item not an instance of FuzzySet (got {type(other)})")
@@ -102,10 +104,12 @@ class FuzzySet(object):
     def __mul__(self, other):
         if isinstance(other, FuzzySet):
             self._var_check(other)
-            return self._make(func=self.membership_function * other.membership_function)
+            return self._make(func=self.membership_function * other.membership_function,
+                              value_name=f"({self.value_name}) AND ({other.value_name})")
 
         if isinstance(other, (int, float)):
-            return self._make(func=self.membership_function * other)
+            return self._make(func=self.membership_function * other,
+                              value_name=f"{other} * {self.value_name}")
 
         else:
             raise TypeError(f"__mul__ undefined for {type(self)} and {type(other)}")
@@ -135,3 +139,13 @@ class FuzzySet(object):
 
     def defuzzify(self, **kwargs):
         return Defuzzifier.defuzzify(self.membership_function, **kwargs)
+
+    def rename(self, variable_name=None, value_name=None, inplace=True):
+        if variable_name:
+            self.variable_name = variable_name
+
+        if value_name:
+            self.value_name = value_name
+
+        if not inplace:
+            return self

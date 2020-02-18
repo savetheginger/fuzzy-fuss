@@ -44,7 +44,7 @@ class Func(object):
 
     def __mul__(self, other):
         if isinstance(other, Func):
-            s_low = max(self.support[0], other.support[0]),
+            s_low = max(self.support[0], other.support[0])
             s_high = min(self.support[1], other.support[1])
 
             return Func(formula=(lambda *args: np.minimum(self(*args), other(*args))),
