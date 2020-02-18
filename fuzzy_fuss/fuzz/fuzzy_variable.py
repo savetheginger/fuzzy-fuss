@@ -15,7 +15,17 @@ class FuzzyVariable(dict):
         if not isinstance(value, FuzzySet):
             raise TypeError(f"'{key}': value must be a FuzzySet object (got {type(value)})")
 
-        super(FuzzyVariable, self).__setitem__(key, value)
+        if value.variable_name and value.variable_name != self.name:
+            raise ValueError(f"Unmatching variable names: '{self.name}' and '{value.variable_name}'")
+
+        super(FuzzyVariable, self).__setitem__(key or value.value_name, value)
+        if not value.value_name:
+            value.value_name = key
+        if not value.variable_name:
+            value.variable_name = self.name
+
+    def add_set(self, value):
+        self.__setitem__(None, value)
 
     def __repr__(self):
         k = [f"'{key}'" for key in self.keys()]

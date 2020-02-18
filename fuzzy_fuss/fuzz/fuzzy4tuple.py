@@ -42,7 +42,7 @@ if __name__ == '__main__':
     fsets = FuzzyVariable('Fuzzy sets')
     fsets['small'] = Fuzzy4Tuple(2, 4, 2, 3, value_name='small')
     fsets['medium'] = Fuzzy4Tuple(7, 10, alpha=2, beta=1, value_name='medium')
-    fsets['none'] = Fuzzy4Tuple(0, 0, 0, 0)
+    fsets.add_set(Fuzzy4Tuple(0, 0, 0, 0, value_name='none'))
     fsets['strict'] = Fuzzy4Tuple(a=3, b=3, alpha=0, beta=0)
 
     fsets.plot_range(0, 10, 0.1, shade=0, kwargs_by_name={'small': {'shade': 0.2}})

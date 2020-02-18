@@ -31,4 +31,3 @@ class ParsedVariable(ParsedObjDict, FuzzyVariable):
 
     def __setitem__(self, key, value):
         super().__setitem__(key, value)
-        self[key].variable_name = self.name
