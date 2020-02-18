@@ -13,6 +13,10 @@ class FuzzySet(object):
         self.variable_name = variable_name
         self.value_name = value_name
 
+    def _setup_dict(self):
+        return dict(variable_name=self.variable_name,
+                    value_name=self.value_name)
+
     @property
     def membership_function(self):
         if not self._mf:
@@ -83,23 +87,35 @@ class FuzzySet(object):
 
         return self.__add__(other)
 
+    def _var_check(self, other):
+        if self.variable_name and other.variable_name and self.variable_name != other.variable_name:
+            raise ValueError(f"Unmatching variable names: {self.variable_name} and {other.variable_name}")
+
     def __add__(self, other):
         if isinstance(other, FuzzySet):
-            return FuzzySet(self.membership_function + other.membership_function)
+            self._var_check(other)
+            return self._make(func=self.membership_function + other.membership_function)
 
         else:
             raise TypeError(f"item not an instance of FuzzySet (got {type(other)})")
 
     def __mul__(self, other):
         if isinstance(other, FuzzySet):
-            return FuzzySet(self.membership_function * other.membership_function)
+            self._var_check(other)
+            return self._make(func=self.membership_function * other.membership_function)
+
         if isinstance(other, (int, float)):
-            return FuzzySet(self.membership_function * other)
+            return self._make(func=self.membership_function * other)
+
         else:
             raise TypeError(f"__mul__ undefined for {type(self)} and {type(other)}")
 
     def __neg__(self):
         return self.complement()
+
+    def _make(self, **kwargs):
+        params = {**self._setup_dict(), **kwargs}
+        return FuzzySet(**params)
 
     def cut(self, cut: float, method='max-min'):
         if not isinstance(cut, float):
