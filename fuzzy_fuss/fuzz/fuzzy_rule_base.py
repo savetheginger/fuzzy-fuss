@@ -82,7 +82,7 @@ class RuleBase(dict):
         axes[-1].axvline(compound_conc.defuzzify(method='coa'), color='k', linestyle='-.', lw=1, label="Crisp val.")
 
         axes[-1].legend()
-
+        axes[0].set_ylabel(f"membership values")
         fig.subplots_adjust(left=0.05, right=0.95, top=0.85)
         fig.suptitle(title or f"Aggregation of rules with {method} method")
         plt.show()

@@ -30,11 +30,15 @@ def refine_plot(show_default=False):
 
             default_xlabel = 'x values'
 
+            label = getattr(args[0], 'variable_name', None) or getattr(args[0], 'name', None)
+
             x = ax.get_xlabel()
             if not x and x != default_xlabel:
-                ax.set_xlabel(getattr(args[0], 'variable_name', None)
-                              or (getattr(args[0], 'name', None))
-                              or default_xlabel)
+                ax.set_xlabel(label or default_xlabel)
+
+            if not ax.get_title() and label:
+                val = getattr(args[0], 'value_name', None)
+                ax.set_title(f"{label}{': ' if val else ''}{val or ''}")
 
             func(*args, ax=ax, **kwargs)
 

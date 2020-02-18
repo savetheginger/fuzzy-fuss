@@ -56,7 +56,7 @@ class Rule(object):
         markers = defaultdict(lambda: None, measurements)
 
         for i, (a_name, a_value) in enumerate(self.prop_atoms):
-            variables[a_name][a_value].plot(ax=axes[i], title=f"{a_name}: {a_value}", marker=markers[a_name], **kwargs)
+            variables[a_name][a_value].plot(ax=axes[i], marker=markers[a_name], **kwargs)
 
         conc = variables[self.conclusion[0]][self.conclusion[1]]
         if measurements:
