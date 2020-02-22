@@ -1,3 +1,5 @@
+import re
+
 from fuzzy_fuss.fuzz.fuzzy_rule_base import RuleBase
 
 from fuzzy_fuss.rbs.parsed_rule import ParsedRule, ParsedMeasurement
@@ -26,6 +28,9 @@ class RuleBaseParser(object):
                 if self.rules.parse(line) or self.measurements.parse(line) \
                         or self.variables[self._current_name].parse(line):
                     continue
+
+                if not re.fullmatch(r'\w+', line):
+                    raise RuntimeError(f"Failed to match line: {line}")
 
                 if not self.name:
                     self.name = line

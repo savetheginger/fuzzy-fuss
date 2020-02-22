@@ -21,7 +21,7 @@ class ParsedAtom(Atom, ParsedObj):
 
 
 class ParsedMeasurement(ParsedAtom):
-    PATTERN = r"\s*(?P<variable>\w+)\s*=\s*(?P<value>\d+(\.\d*){0,1})\s*"
+    PATTERN = r"\s*(?P<variable>\w+)\s*=\s*(?P<value>-{0,1}\d+(\.\d*){0,1})\s*"
 
     def __new__(cls, vals):
         try:

@@ -75,14 +75,14 @@ class Rule(object):
         if len(conn) > 1:
             raise RuntimeError("Rule evaluation for multiple connectives types is not implemented")  # TODO
 
-        conn = tuple(conn)[0]
+        conn = tuple(conn)[0] if conn else 'and'  # if the rule has only one proposition, the connective does not matter
 
         cuts = []
         for a_name, a_value in self.prop_atoms:
             try:
                 cuts.append(variables[a_name][a_value].get_values(measurements[a_name]))
             except KeyError:
-                raise ValueError(f"Missing data for variable {a_name}")
+                raise ValueError(f"Missing data for variable {a_name} ({a_value})")
 
         output_cut = min(cuts) if conn.lower() == 'and' else max(cuts)
 
