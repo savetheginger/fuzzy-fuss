@@ -138,7 +138,10 @@ class FuzzySet(object):
         return self._make(func=func, value_name=f"{self.value_name} cut at {cut}")
 
     def defuzzify(self, **kwargs):
-        return Defuzzifier.defuzzify(self.membership_function, **kwargs)
+        try:
+            return Defuzzifier.defuzzify(self.membership_function, **kwargs)
+        except ZeroDivisionError:
+            return 0
 
     def rename(self, variable_name=None, value_name=None, inplace=True):
         if variable_name:
