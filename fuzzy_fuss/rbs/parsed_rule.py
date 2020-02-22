@@ -15,7 +15,7 @@ class ParsedAtom(Atom, ParsedObj):
 
     @staticmethod
     def match_all(line, split_pattern=None):
-        split_pattern = split_pattern or " and | or "
+        split_pattern = split_pattern or " and | or | AND | OR"
         props = re.split(split_pattern, line, re.IGNORECASE)
         return tuple(ParsedAtom.match(prop, silent=False) for prop in props)
 
@@ -40,7 +40,7 @@ class ParsedRule(Rule, ParsedObj):
         md = m.groupdict()
 
         prop = ParsedAtom.match_all(md['propositions'])
-        connectives = [s.strip(' ') for s in re.findall(r" and | or ", md['propositions'])]
+        connectives = [s.strip(' ') for s in re.findall(r" and | or ", md['propositions'].lower())]
         conclusion = ParsedAtom.match(md['conclusion'], silent=False)
 
         rule = cls(name=md['name'], prop_atoms=prop, prop_connectives=connectives, conclusion=conclusion)

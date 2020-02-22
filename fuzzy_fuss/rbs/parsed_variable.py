@@ -6,13 +6,13 @@ from fuzzy_fuss.rbs.parsed_object import ParsedObj, ParsedObjDict
 
 
 class ParsedTuple(ParsedObj, Fuzzy4Tuple):
-    PATTERN = r"(?P<value>\w+)\s*(?P<numbers>[\s\d.]+)"
+    PATTERN = r"\s*(?P<value>\w+)\s*(?P<numbers>[\s\d.]+)\s*"
 
     @classmethod
     def process_match(cls, m, **kwargs) -> tuple:
         value = m.group('value')
 
-        nums = re.split(r'\s+', m.group('numbers'))
+        nums = re.split(r'\s+', m.group('numbers').strip(' '))
 
         if len(nums) != 4:
             raise ValueError(f"Matching a 4-tuple '{m.string}': expected 4 values, got {len(nums)}")

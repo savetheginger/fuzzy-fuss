@@ -1,0 +1,31 @@
+DrugDelivery
+
+Rule 1: IF HR is normal AND R is normal THEN D is average
+Rule 2: IF HR is low AND R is normal THEN D is moderate
+Rule 3: IF HR is low AND R is low THEN D is small
+Rule 4: IF HR is very_low AND R is low THEN D is very_small
+Rule 5: IF HR is high AND R is high THEN D is high
+Rule 6: IF HR is very_high AND R is high THEN D is very_high
+
+HR
+very_low 40 40 0 20
+low 60 60 20 10
+normal 70 90 10 10
+high 100 100 10 20
+very_high 120 120 20 0
+
+R
+low 0 3 0 3 
+normal 6 8 3 2
+high 10 12 2 0
+
+D
+very_small 0 0 0 2
+small 2 2 2 2
+moderate 4 4 2 2
+average 6 6 2 2
+high 8 8 2 2
+very_high 10 10 2 2
+
+HR = 55
+R = 4
