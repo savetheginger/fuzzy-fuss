@@ -29,8 +29,10 @@ class RuleBaseParser(object):
                         or self.variables[self._current_name].parse(line):
                     continue
 
-                if not re.fullmatch(r'\w+', line):
+                if not re.fullmatch(r'\s*\w+\s*', line):
                     raise RuntimeError(f"Failed to match line: {line}")
+
+                line = line.strip(' ')
 
                 if not self.name:
                     self.name = line
