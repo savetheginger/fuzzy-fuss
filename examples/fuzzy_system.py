@@ -34,7 +34,7 @@ if parsed_args.plot:
 # evaluate the rule base with the measurements
 crisp_val = ruleset.evaluate(measurements, composition=parsed_args.composition, grid_size=parsed_args.grid_size,
                              defuzz_method=parsed_args.defuzz)
-print(f"Defuzzified conclusion: {crisp_val:g}")
+print(f"Defuzzified conclusion ('{ruleset.conclusion_names[0]}'): {crisp_val:g}")
 
 if parsed_args.plot:
     # plot the evaluation procedure

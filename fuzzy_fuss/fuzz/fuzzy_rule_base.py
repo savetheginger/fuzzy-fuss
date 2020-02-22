@@ -41,6 +41,10 @@ class RuleBase(dict):
     def conclusions(self):
         return self.get_partial_conclusions()
 
+    @property
+    def conclusion_names(self):
+        return list(set([rule.conclusion[0] for rule in self]))
+
     def sum(self, weights, **kwargs):
         conclusions = self.get_partial_conclusions(weights, **kwargs)
 
@@ -50,7 +54,10 @@ class RuleBase(dict):
         return {rule.name: rule.compute_weight(self.variables, measurements) for rule in self}
 
     def evaluate(self, measurements: dict, grid_size=1, defuzz_method='coa', **kwargs):
-        # TODO: this assumes the conclusion of each rule is the same variable type
+        conc_names = self.conclusion_names
+        if len(conc_names) > 1:
+            raise RuntimeError(f"More than on target variable (rule conclusion) in the rule base: {conc_names}")
+
         weights = self.compute_weights(measurements)
 
         compound_conclusion = self.sum(weights, **kwargs)
