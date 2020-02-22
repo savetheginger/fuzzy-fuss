@@ -12,7 +12,7 @@ for fv in ruleset.variables.values():
 ruleset.plot_rules(measurements=measurements, shade=0.1)
 
 weights = ruleset.compute_weights(measurements)
-ruleset.plot_eval(weights, method='max-min')
-ruleset.plot_eval(weights, method='max-product')
+ruleset.plot_eval(weights, composition='max-min')
+ruleset.plot_eval(weights, composition='max-product')
 
 

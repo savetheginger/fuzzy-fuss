@@ -37,9 +37,9 @@ class FuzzySet(object):
         return self.membership_function(data)
 
     @plotting.refine_plot()
-    def plot_cut(self, cut_level, ax, method='max-min', **kwargs):
+    def plot_cut(self, cut_level, ax, composition='max-min', **kwargs):
         self.plot(ax=ax, **kwargs)
-        self.cut(cut_level, method).plot(ax=ax, **kwargs)
+        self.cut(cut_level, composition).plot(ax=ax, **kwargs)
         ax.axhline(cut_level, lw=1, color='k', linestyle=':', label=f"{cut_level:.2f}")
         ax.legend()
 
@@ -121,19 +121,19 @@ class FuzzySet(object):
         params = {**self._setup_dict(), **kwargs}
         return FuzzySet(**params)
 
-    def cut(self, cut: float, method='max-min'):
+    def cut(self, cut: float, composition='max-min'):
         if not isinstance(cut, float):
             raise TypeError(f"Cut level must be a float (got {type(cut)})")
 
         if not 0 <= cut <= 1:
             raise ValueError(f"Cut level must be between 0 and 1 (got {cut})")
 
-        if method == 'max-min':
+        if composition == 'max-min':
             func = self._mf.cut(cut)
-        elif method == 'max-product':
+        elif composition == 'max-product':
             func = self.membership_function * cut
         else:
-            raise ValueError(f"Unknown cut method: {method}")
+            raise ValueError(f"Unknown composition method: {composition}")
 
         return self._make(func=func, value_name=f"{self.value_name} cut at {cut}")
 

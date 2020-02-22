@@ -92,9 +92,9 @@ class Rule(object):
         weight = self.compute_weight(variables, measurements)
         return weight, self.get_conclusion(variables, weight)
 
-    def get_conclusion(self, variables, weight=None, method='max-min'):
+    def get_conclusion(self, variables, weight=None, composition='max-min'):
         conc = variables[self.conclusion[0]][self.conclusion[1]]
         if weight is not None:
-            conc = conc.cut(weight, method=method)
+            conc = conc.cut(weight, composition=composition)
 
         return conc

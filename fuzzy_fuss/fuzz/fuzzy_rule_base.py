@@ -62,14 +62,14 @@ class RuleBase(dict):
             fr.plot(self.variables, **kwargs)
 
     @plotting.refine_multiplot
-    def plot_eval(self, weights: dict, title=None, method='max-min', **kwargs):
-        conclusions_cut = self.get_partial_conclusions(weights, method=method)
+    def plot_eval(self, weights: dict, title=None, composition='max-min', **kwargs):
+        conclusions_cut = self.get_partial_conclusions(weights, composition=composition)
 
         rules = list(self)
 
         fig, axes = plt.subplots(1, len(self)+1, figsize=(15, 4), sharey='all', sharex='all')
         for i, conc in enumerate(self.conclusions):
-            conc.plot_cut(ax=axes[i], cut_level=weights[rules[i].name], method=method,
+            conc.plot_cut(ax=axes[i], cut_level=weights[rules[i].name], composition=composition,
                           title=f"{rules[i].name} {rules[i].conclusion}", **kwargs)
 
         for i, conc in enumerate(conclusions_cut):
@@ -84,5 +84,5 @@ class RuleBase(dict):
         axes[-1].legend()
         axes[0].set_ylabel(f"membership values")
         fig.subplots_adjust(left=0.05, right=0.95, top=0.85)
-        fig.suptitle(title or f"Aggregation of rules with {method} method")
+        fig.suptitle(title or f"Aggregation of rules with {composition} method")
         plt.show()

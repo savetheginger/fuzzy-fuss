@@ -19,5 +19,5 @@ setuptools.setup(
     description="Little fuzzy logic toolbox",
     packages=['fuzzy_fuss'],
     python_requires='>=3.6',
-    install_requires=['numpy>=1.16', 'matplotlib']
+    install_requires=['numpy>=1.16', 'matplotlib', 'pandas']
 )
