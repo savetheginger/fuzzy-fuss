@@ -36,6 +36,8 @@ for i1, val1 in enumerate(meas_grid[var1]):
         results[i1, i2] = ruleset.evaluate(measurements={**measurements, var1: val1, var2: val2})
 print("Done")
 
+print(f"NaN values: {100*np.isnan(results).sum()/results.size:g}% of the grid")
+
 x, y = np.meshgrid(meas_grid[var1], meas_grid[var2])
 
 fig = plt.figure()
