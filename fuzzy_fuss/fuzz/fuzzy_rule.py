@@ -49,7 +49,7 @@ class Rule(object):
         return f"{self.name}: {prop} => {str(self.conclusion)}"
 
     @plotting.refine_multiplot
-    def plot(self, variables, measurements=None, axes=None, fig=None, title=None, **kwargs):
+    def plot(self, variables, measurements=None, axes=None, fig=None, title=None, composition='coa', **kwargs):
         if axes is None:
             fig, axes = plt.subplots(1, len(self.prop_atoms)+1, sharey='all', figsize=(8, 4))
 
@@ -61,7 +61,7 @@ class Rule(object):
         conc = variables[self.conclusion[0]][self.conclusion[1]]
         if measurements:
             out_cut = self.compute_weight(variables, measurements)
-            conc.plot_cut(out_cut, ax=axes[-1], **kwargs)
+            conc.plot_cut(out_cut, ax=axes[-1], composition=composition, **kwargs)
         else:
             conc.plot(ax=axes[-1], **kwargs)
 

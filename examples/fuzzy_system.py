@@ -29,7 +29,7 @@ if parsed_args.plot:
         fv.plot_range(margin=10)
 
     # plot parsed rules
-    ruleset.plot_rules(measurements=measurements, shade=0.1)
+    ruleset.plot_rules(measurements=measurements, shade=0.1, composition=parsed_args.composition)
 
 # evaluate the rule base with the measurements
 crisp_val = ruleset.evaluate(measurements, composition=parsed_args.composition, grid_size=parsed_args.grid_size,
