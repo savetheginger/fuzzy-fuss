@@ -70,12 +70,22 @@ class Rule(object):
         fig.suptitle(title or str(self))
         fig.subplots_adjust(top=0.8)
 
-    def compute_weight(self, variables: dict, measurements: dict):
-        conn = set(self.prop_connectives)
-        if len(conn) > 1:
-            raise RuntimeError("Rule evaluation for multiple connectives types is not implemented")  # TODO
+    def choose_weight(self, weights):
+        statement = [weights[0]]
+        for i, conn in enumerate(self.prop_connectives):
+            statement.extend([conn, weights[i+1]])
 
-        conn = tuple(conn)[0] if conn else 'and'  # if the rule has only one proposition, the connective does not matter
+        def pick(_stat):
+            if len(_stat) < 2:
+                return _stat[0]
+            head = _stat[0]
+            conn = _stat[1]
+            tail = pick(_stat[2:]) if len(_stat) > 3 else _stat[2]
+            return min(head, tail) if conn.lower() == 'and' else max(head, tail)
+
+        return pick(statement)
+
+    def compute_weight(self, variables: dict, measurements: dict):
 
         cuts = []
         for a_name, a_value in self.prop_atoms:
@@ -84,9 +94,7 @@ class Rule(object):
             except KeyError:
                 raise ValueError(f"Missing data for variable {a_name} ({a_value})")
 
-        output_cut = min(cuts) if conn.lower() == 'and' else max(cuts)
-
-        return output_cut
+        return self.choose_weight(cuts)
 
     def evaluate(self, variables, measurements):
         weight = self.compute_weight(variables, measurements)
