@@ -141,7 +141,7 @@ class FuzzySet(object):
         try:
             return Defuzzifier.defuzzify(self.membership_function, **kwargs)
         except ZeroDivisionError:
-            return 0
+            return None
 
     def rename(self, variable_name=None, value_name=None, inplace=True):
         if variable_name:

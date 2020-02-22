@@ -40,7 +40,7 @@ x, y = np.meshgrid(meas_grid[var1], meas_grid[var2])
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-ax.plot_surface(x, y, results, rstride=1, cstride=1, cmap='viridis')
+ax.plot_surface(x, y, results, rstride=1, cstride=1, cmap='viridis', vmax=np.nanmax(results), vmin=np.nanmin(results))
 ax.set_xlabel(var1)
 ax.set_ylabel(var2)
 ax.set_zlabel(ruleset.conclusion_names[0])
