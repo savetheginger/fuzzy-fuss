@@ -4,6 +4,8 @@ from fuzzy_fuss.fuzz.func import Func
 
 
 class Defuzzifier(object):
+    METHODS = ('coa', 'som', 'lom', 'mom')
+
     @staticmethod
     def defuzzify(func: Func, grid_size=1, method='coa'):
         if not isinstance(func, Func):
@@ -11,7 +13,7 @@ class Defuzzifier(object):
 
         method = method.lower()
 
-        if method in ['coa', 'som', 'lom', 'mom']:
+        if method in Defuzzifier.METHODS:
             return getattr(Defuzzifier, f'_defuzzify_{method}')(*Defuzzifier.generate_data(func, grid_size))
         else:
             raise ValueError(f"Unknown defuzzification method code: {method}")

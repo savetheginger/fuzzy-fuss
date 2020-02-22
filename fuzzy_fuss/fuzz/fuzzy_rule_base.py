@@ -49,20 +49,20 @@ class RuleBase(dict):
     def compute_weights(self, measurements):
         return {rule.name: rule.compute_weight(self.variables, measurements) for rule in self}
 
-    def evaluate(self, measurements: dict, grid_size=1, **kwargs):
+    def evaluate(self, measurements: dict, grid_size=1, defuzz_method='coa', **kwargs):
         # TODO: this assumes the conclusion of each rule is the same variable type
         weights = self.compute_weights(measurements)
 
         compound_conclusion = self.sum(weights, **kwargs)
 
-        return compound_conclusion.defuzzify(grid_size=grid_size)
+        return compound_conclusion.defuzzify(grid_size=grid_size, method=defuzz_method)
 
     def plot_rules(self, **kwargs):
         for fr in self:
             fr.plot(self.variables, **kwargs)
 
     @plotting.refine_multiplot
-    def plot_eval(self, weights: dict, title=None, composition='max-min', **kwargs):
+    def plot_eval(self, weights: dict, title=None, composition='max-min', crisp_conclusion=None, **kwargs):
         conclusions_cut = self.get_partial_conclusions(weights, composition=composition)
 
         rules = list(self)
@@ -79,7 +79,8 @@ class RuleBase(dict):
         compound_conc.plot(ax=axes[-1], shade=0, color='k', label="Aggregate",
                            title=f"{compound_conc.variable_name}: composition")
 
-        axes[-1].axvline(compound_conc.defuzzify(method='coa'), color='k', linestyle='-.', lw=1, label="Crisp val.")
+        if crisp_conclusion is not None:
+            axes[-1].axvline(crisp_conclusion, color='k', linestyle='-.', lw=1, label="Crisp val.")
 
         axes[-1].legend()
         axes[0].set_ylabel(f"membership values")
