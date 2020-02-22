@@ -11,9 +11,9 @@ medium 10 10 10 10
 high 20 20 10 0
 
 temperature
-low 0 100 0 50
-medium 250 250 100 100
-high 400 450 120 0
+low 0 100 0 150
+medium 200 200 150 150
+high 400 500 150 0
 
 change
 reduce -50 -50 50 50

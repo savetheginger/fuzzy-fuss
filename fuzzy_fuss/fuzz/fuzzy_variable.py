@@ -53,7 +53,10 @@ class FuzzyVariable(dict):
         ax.legend()
 
     def plot_range(self, *args, margin=10, **kwargs):
-        args = args or self.get_support(margin=margin)
+        if not args:
+            support = self.get_support(margin=margin)
+            grid = (support[1] - support[0]) / 1000
+            args = support + (grid,)
         data = np.arange(*args)
         self.plot(data, **kwargs)
 
