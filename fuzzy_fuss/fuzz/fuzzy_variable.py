@@ -32,9 +32,10 @@ class FuzzyVariable(dict):
         return f"Fuzzy variable with values: {', '.join(k) if k else '(none yet)'}"
 
     def get_support(self, margin=0):
-        s_low = min(v.support[0] for v in self.values()) - margin
-        s_high = max(v.support[1] for v in self.values()) + margin
-        return s_low, s_high
+        s_low = min(v.support[0] for v in self.values())
+        s_high = max(v.support[1] for v in self.values())
+        margin_value = margin * (s_high - s_low)
+        return s_low - margin_value, s_high + margin_value
 
     @plotting.refine_plot(show_default=True)
     def plot(self, data, ax, names=None, title=None, kwargs_by_name: dict = None, **kwargs,):
@@ -52,7 +53,7 @@ class FuzzyVariable(dict):
 
         ax.legend()
 
-    def plot_range(self, *args, margin=10, **kwargs):
+    def plot_range(self, *args, margin=0.1, **kwargs):
         if not args:
             support = self.get_support(margin=margin)
             grid = (support[1] - support[0]) / 1000

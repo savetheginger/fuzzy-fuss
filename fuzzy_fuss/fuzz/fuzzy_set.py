@@ -56,8 +56,8 @@ class FuzzySet(object):
 
         if marker:
             marker_val = self.get_values(marker)
-            ax.axvline(marker, lw=1, color='k', linestyle='-.', label="Meas.")
-            ax.axhline(marker_val, lw=1, color='k', linestyle=':')
+            ax.axvline(marker, lw=1, color='k', linestyle='-.', label=f"{marker:g}")
+            ax.axhline(marker_val, lw=1, color='k', linestyle=':', label=f"{marker_val:g}")
             ax.plot(marker, marker_val, '*', color='crimson', markersize=10)
             ax.legend()
 

@@ -21,14 +21,13 @@ if __name__ == '__main__':
     kwargs = dict(composition=parsed_args.composition,
                   grid_size=parsed_args.grid_size)
 
-
     # parse the fuzzy rule base from the file
     ruleset, measurements = RuleBaseParser().parse(parsed_args.filename)
 
     if parsed_args.plot:
         # plot parsed fuzzy variables
         for fv in ruleset.variables.values():
-            fv.plot_range(margin=10)
+            fv.plot_range(margin=0.1)
 
         # plot parsed rules
         ruleset.plot_rules(measurements=measurements, shade=0.1, composition=parsed_args.composition)
