@@ -78,10 +78,14 @@ class Rule(object):
         def pick(_stat):
             if len(_stat) < 2:
                 return _stat[0]
+
+            if 'or' in _stat:
+                ix = _stat.index('or')
+                return max(pick(_stat[:ix]), pick(_stat[ix+1:]))
+
             head = _stat[0]
-            conn = _stat[1]
             tail = pick(_stat[2:]) if len(_stat) > 3 else _stat[2]
-            return min(head, tail) if conn.lower() == 'and' else max(head, tail)
+            return min(head, tail)  # and
 
         return pick(statement)
 
