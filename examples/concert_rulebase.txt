@@ -1,22 +1,21 @@
 ConcertVolumeControl
 
 Rule 1: If venue is large or crowd is large and music is hard then volume is high
-Rule 2: If venue is tiny then volume is low
-Rule 3: If venue is small and crowd is medium then volume is medium
+Rule 2: If venue is small then volume is low
+Rule 3: If venue is medium and crowd is small then volume is medium
 Rule 4: If venue is medium and music is soft or music is medium then volume is medium
-Rule 5: If venue is small or crowd is small and music is medium then volume is low
+Rule 5: If venue is large and crowd is medium or music is medium then volume is medium
 
 
 venue
-tiny 0 10 0 10
-small 20 20 10 10
-medium 50 100 10 20
-large 200 500 100 0
+small 0 20 0 10
+medium 40 60 20 20
+large 80 100 20 0
 
 crowd
 small 0 10 0 20
-medium 20 50 10 50
-large 100 500 50 0
+medium 20 50 10 20
+large 75 150 30 0
 
 music
 soft 0 10 0 20
@@ -24,10 +23,10 @@ medium 25 50 10 20
 hard 70 100 30 0
 
 volume
-low 10 10 5 5
-medium 20 20 10 10
-high 40 70 20 30
+low 50 50 20 10
+medium 60 75 10 10
+high 80 110 20 5
 
-venue = 40
+venue = 65
 crowd = 60
-music = 65
+music = 60
